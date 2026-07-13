@@ -101,6 +101,19 @@
     padding:4px 6px;
   }
   .remove-btn:hover{ color:var(--red); }
+  .tag-cat-row{
+    display:flex; align-items:center; gap:12px; padding:10px 12px; margin-bottom:8px;
+    border:1px solid var(--line); border-radius:6px; background:var(--bg);
+  }
+  .tag-cat-swatch{
+    width:20px; height:20px; border-radius:50%; flex-shrink:0; border:1px solid var(--line);
+    padding:0; cursor:pointer;
+  }
+  .tag-cat-row input[type=text]{ flex:1; }
+  .tag-cat-key{
+    font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint);
+    flex-shrink:0; min-width:90px;
+  }
   .footer-note{
     max-width:820px; margin:0 auto; color:var(--text-faint); font-size:12px; line-height:1.6;
   }
@@ -123,6 +136,56 @@
     sul tuo hosting (sovrascrivendo quello vecchio, se presente) e il sito si aggiorna automaticamente.
     Nessun contenuto viene inviato online da questa pagina: tutto resta nel tuo browser finché non scarichi il file.
   </p>
+
+  <!-- TAG CATEGORIES -->
+  <section class="block" id="tag-categories-block">
+    <h2>Tag Categories</h2>
+    <p class="block-hint">
+      Le categorie usate per colorare i tag dei progetti e le card di Skills/Software.
+      Crea nuove categorie con il colore che preferisci: le tendine di Projects, Key Skills
+      e Software si aggiornano da sole.
+    </p>
+    <div id="tag-categories-list"></div>
+    <div class="item-card" style="border-style:dashed;">
+      <span class="item-label">Nuova categoria</span>
+      <div class="row" style="margin-top:10px; align-items:flex-end;">
+        <div>
+          <label>Nome</label>
+          <input type="text" id="new-tag-label" placeholder="es. Narrative Design">
+        </div>
+        <div style="flex:0 0 90px;">
+          <label>Colore</label>
+          <input type="color" id="new-tag-color" value="#4fd8ea" style="height:40px; padding:2px; cursor:pointer;">
+        </div>
+      </div>
+      <button class="add-btn" id="add-tag-category" type="button" style="margin-top:12px;">+ Crea categoria</button>
+    </div>
+  </section>
+
+  <!-- PARALLAX BACKGROUND -->
+  <section class="block">
+    <h2>Parallax Background</h2>
+    <p class="block-hint">
+      Immagine di sfondo che scorre più lentamente del contenuto mentre si naviga il sito (dietro
+      griglia HUD e bagliori). Dato che carichi tu i file nella repo GitHub, questa pagina registra
+      solo il <strong>percorso</strong> dell'immagine: dopo aver scaricato il JSON, carica anche il
+      file vero nella cartella <code>assets/</code> del repo, con lo stesso nome.
+    </p>
+    <label>Immagine di sfondo</label>
+    <div class="cover-preview" id="parallax-image-preview" style="height:110px;">Clicca per scegliere un'immagine</div>
+    <input type="file" id="parallax-image-file" accept="image/*" style="display:none">
+    <div class="row" style="margin-top:14px">
+      <div>
+        <label>Opacità (0 = invisibile, 1 = piena)</label>
+        <input type="text" id="parallax-opacity" placeholder="es. 0.35">
+      </div>
+      <div>
+        <label>Velocità parallax (0 = fissa, 1 = segue lo scroll)</label>
+        <input type="text" id="parallax-speed" placeholder="es. 0.1">
+      </div>
+    </div>
+    <button class="btn btn--small btn--danger" id="parallax-remove" type="button" style="margin-top:14px">Rimuovi immagine di sfondo</button>
+  </section>
 
   <!-- HERO -->
   <section class="block">
@@ -183,7 +246,7 @@
   <!-- PROJECTS -->
   <section class="block">
     <h2>Projects</h2>
-    <p class="block-hint">Il primo progetto della lista è sempre quello "Featured" (più grande). Trascina l'ordine modificando la posizione con i tasti su/giù di ogni card.</p>
+    <p class="block-hint">Il primo progetto della lista è sempre quello "Featured" (più grande). Riordina con le frecce ↑↓. Spunta "Ha una pagina di dettaglio" per creare la pagina cliccabile del singolo progetto (trailer, descrizione, fatti rapidi, sezioni).</p>
     <div id="projects-list"></div>
     <button class="add-btn" id="add-project">+ Aggiungi progetto</button>
   </section>
@@ -271,7 +334,15 @@
   </p>
 
 <script>
-  const CATS = ['design', 'programming', 'vfx', 'tools'];
+  /* Le categorie (con colore) sono ora dati modificabili, non più una lista fissa.
+     getCategoryOptions() genera le <option> per ogni <select> a partire da
+     state.tagCategories, quindi ogni nuova categoria creata nel pannello
+     "Tag Categories" compare automaticamente ovunque. */
+  function getCategoryOptions(selectedKey){
+    return state.tagCategories.map(c =>
+      `<option value="${escapeAttr(c.key)}" ${c.key === selectedKey ? 'selected' : ''}>${escapeHtml(c.label)}</option>`
+    ).join('');
+  }
 
   const DEFAULT_DATA = {
     hero: {
@@ -332,7 +403,15 @@
       title: "Parliamo di un progetto.",
       text: "Per collaborazioni, ruoli aperti o semplicemente per fare due chiacchiere su combat e systems design.",
       email: "tuamail@esempio.com", buttonLabel: "Scrivimi una mail"
-    }
+    },
+    projectPages: [],
+    tagCategories: [
+      { key: "design", label: "Design", color: "#b98cff" },
+      { key: "programming", label: "Programming", color: "#4fd8ea" },
+      { key: "vfx", label: "VFX", color: "#ffb64d" },
+      { key: "tools", label: "Tools", color: "#6bcf7f" }
+    ],
+    parallax: { imageSrc: "", speed: 0.1, opacity: 0.35 }
   };
 
   let state = JSON.parse(JSON.stringify(DEFAULT_DATA));
@@ -443,6 +522,46 @@
     });
   }
 
+  /* ---------- PARALLAX BACKGROUND IMAGE ---------- */
+  function syncParallaxUI(){
+    const preview = document.getElementById('parallax-image-preview');
+    if (state.parallax.imageSrc) {
+      preview.textContent = `File impostato: ${state.parallax.imageSrc} — clicca per cambiarlo`;
+    } else {
+      preview.textContent = "Clicca per scegliere un'immagine";
+    }
+    document.getElementById('parallax-opacity').value = state.parallax.opacity != null ? state.parallax.opacity : 0.35;
+    document.getElementById('parallax-speed').value = state.parallax.speed != null ? state.parallax.speed : 0.1;
+  }
+
+  function setupParallaxListeners(){
+    document.getElementById('parallax-image-preview').addEventListener('click', () => {
+      document.getElementById('parallax-image-file').click();
+    });
+    document.getElementById('parallax-image-file').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      /* Come per il video hero: niente base64, solo il percorso atteso.
+         Il file vero va caricato a mano nella cartella assets/ della repo. */
+      state.parallax.imageSrc = 'assets/' + file.name;
+      syncParallaxUI();
+      setStatus(`Percorso immagine impostato: assets/${file.name} — ricordati di caricare anche il file vero nella cartella assets/ della repo.`, 'ok');
+    });
+    document.getElementById('parallax-opacity').addEventListener('input', (e) => {
+      const v = parseFloat(e.target.value);
+      state.parallax.opacity = isNaN(v) ? 0.35 : v;
+    });
+    document.getElementById('parallax-speed').addEventListener('input', (e) => {
+      const v = parseFloat(e.target.value);
+      state.parallax.speed = isNaN(v) ? 0.1 : v;
+    });
+    document.getElementById('parallax-remove').addEventListener('click', () => {
+      state.parallax.imageSrc = '';
+      syncParallaxUI();
+      setStatus('Immagine di sfondo parallax rimossa.', 'ok');
+    });
+  }
+
   function bindSimpleFields(){
     bindText('hero-wordCyan', 'hero.wordCyan');
     bindText('hero-wordRed', 'hero.wordRed');
@@ -450,6 +569,7 @@
     bindText('hero-readout', 'hero.readout');
     bindText('hero-youtubeId', 'hero.youtubeId');
     syncHeroBackgroundUI();
+    syncParallaxUI();
 
     bindText('more-other-label', 'moreLinks.other.label');
     bindText('more-other-sub', 'moreLinks.other.sub');
@@ -494,10 +614,19 @@
         <label>Cover</label>
         <div class="cover-preview" data-cover-preview style="${p.cover ? `background-image:url('${p.cover}')` : ''}">${p.cover ? '' : 'Clicca per caricare un\'immagine'}</div>
         <input type="file" accept="image/*" data-cover-file style="display:none">
+        <label style="margin-top:20px; display:flex; align-items:center; gap:8px; cursor:pointer;">
+          <input type="checkbox" data-has-page style="width:auto;"> Ha una pagina di dettaglio (cliccabile dalla card)
+        </label>
+        <div data-page-editor></div>
       `;
       wrap.appendChild(card);
 
-      card.querySelector('[data-field="title"]').addEventListener('input', e => { p.title = e.target.value; renderProjectsLabelOnly(); });
+      card.querySelector('[data-field="title"]').addEventListener('input', e => {
+        const oldTitle = p.title;
+        p.title = e.target.value;
+        const page = state.projectPages.find(pp => pp.title === oldTitle);
+        if (page) page.title = p.title;
+      });
       card.querySelector('[data-field="role"]').addEventListener('input', e => p.role = e.target.value);
       card.querySelector('[data-up]').addEventListener('click', () => { moveItem(state.projects, i, -1); renderProjects(); });
       card.querySelector('[data-down]').addEventListener('click', () => { moveItem(state.projects, i, 1); renderProjects(); });
@@ -512,7 +641,7 @@
           row.innerHTML = `
             <div><input type="text" value="${escapeAttr(t.label)}" placeholder="Etichetta tag"></div>
             <div>
-              <select>${CATS.map(c => `<option value="${c}" ${c===t.cat?'selected':''}>${c}</option>`).join('')}</select>
+              <select>${getCategoryOptions(t.cat)}</select>
             </div>
             <button class="remove-btn" type="button">✕</button>
           `;
@@ -541,6 +670,253 @@
           coverPreview.textContent = '';
           setStatus('Immagine caricata.', 'ok');
         } catch(e) { setStatus('Errore caricando l\'immagine.', 'err'); }
+      });
+
+      /* ---------- Pagina di dettaglio del progetto ---------- */
+      const hasPageCheckbox = card.querySelector('[data-has-page]');
+      const pageEditorWrap = card.querySelector('[data-page-editor]');
+      let page = state.projectPages.find(pp => pp.title === p.title);
+      hasPageCheckbox.checked = !!page;
+
+      function renderPageEditor(){
+        pageEditorWrap.innerHTML = '';
+        if (!page) return;
+        const box = document.createElement('div');
+        box.style.cssText = 'margin-top:14px; padding:14px; border:1px solid var(--line); border-radius:6px; background:var(--panel-2);';
+        box.innerHTML = `
+          <label>Tipo di trailer</label>
+          <select data-trailer-type>
+            <option value="none">Nessuno</option>
+            <option value="youtube">Video YouTube</option>
+            <option value="video">File video caricato (locale)</option>
+            <option value="image">Immagine</option>
+          </select>
+          <div data-trailer-youtube style="display:none">
+            <label>ID video YouTube</label>
+            <input type="text" data-trailer-youtubeid placeholder="es. VrhL2W6CBlg">
+          </div>
+          <div data-trailer-video style="display:none">
+            <label>File video (percorso — carica poi il file vero in assets/)</label>
+            <div class="cover-preview" data-trailer-video-preview style="height:60px;">Clicca per scegliere un file video</div>
+            <input type="file" accept="video/*" data-trailer-video-file style="display:none">
+          </div>
+          <div data-trailer-image style="display:none">
+            <label>Immagine trailer</label>
+            <div class="cover-preview" data-trailer-image-preview style="height:100px;">Clicca per caricare un'immagine</div>
+            <input type="file" accept="image/*" data-trailer-image-file style="display:none">
+          </div>
+          <div class="row">
+            <div>
+              <label>Etichetta bottone trailer</label>
+              <input type="text" data-trailer-label>
+            </div>
+            <div>
+              <label>Etichetta bottone download</label>
+              <input type="text" data-download-label>
+            </div>
+          </div>
+          <label>Link download (Steam, itch.io...)</label>
+          <input type="text" data-download-url>
+          <label>Descrizione progetto/gioco</label>
+          <textarea data-page-description placeholder="Testo normale, oppure elenco puntato scrivendo ogni voce su una riga a parte iniziando con - (es.&#10;- Genere: Action Roguelike&#10;- Piattaforme: PC)"></textarea>
+          <p class="block-hint" style="margin:-8px 0 14px">Per un elenco puntato scrivi ogni voce su una riga separata iniziando con "- " (trattino e spazio). Una riga vuota separa due paragrafi.</p>
+          <label>Fatti rapidi (genere, piattaforme, ruolo, tempo, team, studio...)</label>
+          <div data-facts></div>
+          <button class="add-btn" type="button" data-add-fact>+ Aggiungi fatto</button>
+          <label style="margin-top:18px">Sezioni (paragrafi con testo + media, alternati automaticamente)</label>
+          <div data-sections></div>
+          <button class="add-btn" type="button" data-add-section>+ Aggiungi sezione</button>
+        `;
+        pageEditorWrap.appendChild(box);
+
+        const trailerTypeSel = box.querySelector('[data-trailer-type]');
+        trailerTypeSel.value = page.trailer.type || 'none';
+        function syncTrailerFields(){
+          box.querySelector('[data-trailer-youtube]').style.display = page.trailer.type === 'youtube' ? '' : 'none';
+          box.querySelector('[data-trailer-video]').style.display = page.trailer.type === 'video' ? '' : 'none';
+          box.querySelector('[data-trailer-image]').style.display = page.trailer.type === 'image' ? '' : 'none';
+          const vp = box.querySelector('[data-trailer-video-preview]');
+          vp.textContent = page.trailer.videoSrc ? `File: ${page.trailer.videoSrc} — clicca per cambiare` : 'Clicca per scegliere un file video';
+          const ip = box.querySelector('[data-trailer-image-preview]');
+          if (page.trailer.imageSrc) { ip.style.backgroundImage = `url('${page.trailer.imageSrc}')`; ip.textContent = ''; }
+          else { ip.style.backgroundImage = ''; ip.textContent = "Clicca per caricare un'immagine"; }
+        }
+        syncTrailerFields();
+        trailerTypeSel.addEventListener('change', e => { page.trailer.type = e.target.value; syncTrailerFields(); });
+
+        box.querySelector('[data-trailer-youtubeid]').value = page.trailer.youtubeId || '';
+        box.querySelector('[data-trailer-youtubeid]').addEventListener('input', e => page.trailer.youtubeId = e.target.value);
+
+        box.querySelector('[data-trailer-video-preview]').addEventListener('click', () => box.querySelector('[data-trailer-video-file]').click());
+        box.querySelector('[data-trailer-video-file]').addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          page.trailer.videoSrc = 'assets/' + file.name;
+          syncTrailerFields();
+          setStatus(`Percorso video impostato: assets/${file.name} — carica anche il file vero in assets/.`, 'ok');
+        });
+
+        box.querySelector('[data-trailer-image-preview]').addEventListener('click', () => box.querySelector('[data-trailer-image-file]').click());
+        box.querySelector('[data-trailer-image-file]').addEventListener('change', async (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          setStatus('Comprimo immagine…');
+          try {
+            page.trailer.imageSrc = await fileToCompressedDataURL(file, 1600, 0.82);
+            syncTrailerFields();
+            setStatus('Immagine trailer caricata.', 'ok');
+          } catch(err) { setStatus('Errore caricando l\'immagine.', 'err'); }
+        });
+
+        const trailerLabelInput = box.querySelector('[data-trailer-label]');
+        trailerLabelInput.value = page.trailerLabel || '';
+        trailerLabelInput.addEventListener('input', e => page.trailerLabel = e.target.value);
+
+        const downloadLabelInput = box.querySelector('[data-download-label]');
+        downloadLabelInput.value = page.downloadLabel || '';
+        downloadLabelInput.addEventListener('input', e => page.downloadLabel = e.target.value);
+
+        const downloadUrlInput = box.querySelector('[data-download-url]');
+        downloadUrlInput.value = page.downloadUrl || '';
+        downloadUrlInput.addEventListener('input', e => page.downloadUrl = e.target.value);
+
+        const descInput = box.querySelector('[data-page-description]');
+        descInput.value = page.description || '';
+        descInput.addEventListener('input', e => page.description = e.target.value);
+
+        const factsWrap = box.querySelector('[data-facts]');
+        function renderPageFacts(){
+          factsWrap.innerHTML = '';
+          page.facts.forEach((f, fi) => {
+            const row = document.createElement('div');
+            row.className = 'tag-item';
+            row.innerHTML = `
+              <div><input type="text" value="${escapeAttr(f.label)}" placeholder="Etichetta"></div>
+              <div><input type="text" value="${escapeAttr(f.value)}" placeholder="Valore"></div>
+              <button class="remove-btn" type="button">✕</button>
+            `;
+            const [labelInput, valueInput] = row.querySelectorAll('input');
+            labelInput.addEventListener('input', e => f.label = e.target.value);
+            valueInput.addEventListener('input', e => f.value = e.target.value);
+            row.querySelector('.remove-btn').addEventListener('click', () => { page.facts.splice(fi,1); renderPageFacts(); });
+            factsWrap.appendChild(row);
+          });
+        }
+        renderPageFacts();
+        box.querySelector('[data-add-fact]').addEventListener('click', () => { page.facts.push({label:'Etichetta', value:'Valore'}); renderPageFacts(); });
+
+        const sectionsWrap = box.querySelector('[data-sections]');
+        function renderSections(){
+          sectionsWrap.innerHTML = '';
+          page.sections.forEach((s, si) => {
+            const sBox = document.createElement('div');
+            sBox.className = 'item-card';
+            sBox.innerHTML = `
+              <div class="item-top">
+                <span class="item-label">Sezione ${si+1}</span>
+                <div>
+                  <button class="remove-btn" data-s-up>↑</button>
+                  <button class="remove-btn" data-s-down>↓</button>
+                  <button class="remove-btn" data-s-remove>✕</button>
+                </div>
+              </div>
+              <label>Titolo paragrafo</label>
+              <input type="text" data-s-title value="${escapeAttr(s.title)}">
+              <label>Descrizione lavoro</label>
+              <textarea data-s-text placeholder="Testo normale, oppure elenco puntato con righe che iniziano con - ">${escapeHtml(s.text)}</textarea>
+              <p class="block-hint" style="margin:-8px 0 10px">Per un elenco puntato scrivi ogni voce su una riga separata iniziando con "- ".</p>
+              <label>Media</label>
+              <select data-s-media-type>
+                <option value="none">Nessuno</option>
+                <option value="youtube">Video YouTube</option>
+                <option value="video">File video caricato (locale)</option>
+                <option value="image">Immagine</option>
+              </select>
+              <div data-s-youtube style="display:none">
+                <input type="text" data-s-youtubeid placeholder="ID video YouTube" style="margin-top:8px">
+              </div>
+              <div data-s-video style="display:none">
+                <div class="cover-preview" data-s-video-preview style="height:60px; margin-top:8px;">Clicca per scegliere un file video</div>
+                <input type="file" accept="video/*" data-s-video-file style="display:none">
+              </div>
+              <div data-s-image style="display:none">
+                <div class="cover-preview" data-s-image-preview style="height:100px; margin-top:8px;">Clicca per caricare un'immagine</div>
+                <input type="file" accept="image/*" data-s-image-file style="display:none">
+              </div>
+            `;
+            sectionsWrap.appendChild(sBox);
+
+            sBox.querySelector('[data-s-title]').addEventListener('input', e => s.title = e.target.value);
+            sBox.querySelector('[data-s-text]').addEventListener('input', e => s.text = e.target.value);
+            sBox.querySelector('[data-s-up]').addEventListener('click', () => { moveItem(page.sections, si, -1); renderSections(); });
+            sBox.querySelector('[data-s-down]').addEventListener('click', () => { moveItem(page.sections, si, 1); renderSections(); });
+            sBox.querySelector('[data-s-remove]').addEventListener('click', () => { page.sections.splice(si,1); renderSections(); });
+
+            const mediaTypeSel = sBox.querySelector('[data-s-media-type]');
+            mediaTypeSel.value = s.media.type || 'none';
+            function syncSectionMedia(){
+              sBox.querySelector('[data-s-youtube]').style.display = s.media.type === 'youtube' ? '' : 'none';
+              sBox.querySelector('[data-s-video]').style.display = s.media.type === 'video' ? '' : 'none';
+              sBox.querySelector('[data-s-image]').style.display = s.media.type === 'image' ? '' : 'none';
+              const vp = sBox.querySelector('[data-s-video-preview]');
+              vp.textContent = s.media.videoSrc ? `File: ${s.media.videoSrc} — clicca per cambiare` : 'Clicca per scegliere un file video';
+              const ip = sBox.querySelector('[data-s-image-preview]');
+              if (s.media.imageSrc) { ip.style.backgroundImage = `url('${s.media.imageSrc}')`; ip.textContent = ''; }
+              else { ip.style.backgroundImage = ''; ip.textContent = "Clicca per caricare un'immagine"; }
+            }
+            syncSectionMedia();
+            mediaTypeSel.addEventListener('change', e => { s.media.type = e.target.value; syncSectionMedia(); });
+
+            const ytInput = sBox.querySelector('[data-s-youtubeid]');
+            ytInput.value = s.media.youtubeId || '';
+            ytInput.addEventListener('input', e => s.media.youtubeId = e.target.value);
+
+            sBox.querySelector('[data-s-video-preview]').addEventListener('click', () => sBox.querySelector('[data-s-video-file]').click());
+            sBox.querySelector('[data-s-video-file]').addEventListener('change', (e) => {
+              const file = e.target.files[0];
+              if (!file) return;
+              s.media.videoSrc = 'assets/' + file.name;
+              syncSectionMedia();
+              setStatus(`Percorso video impostato: assets/${file.name} — carica anche il file vero in assets/.`, 'ok');
+            });
+
+            sBox.querySelector('[data-s-image-preview]').addEventListener('click', () => sBox.querySelector('[data-s-image-file]').click());
+            sBox.querySelector('[data-s-image-file]').addEventListener('change', async (e) => {
+              const file = e.target.files[0];
+              if (!file) return;
+              setStatus('Comprimo immagine…');
+              try {
+                s.media.imageSrc = await fileToCompressedDataURL(file, 1400, 0.82);
+                syncSectionMedia();
+                setStatus('Immagine caricata.', 'ok');
+              } catch(err) { setStatus('Errore caricando l\'immagine.', 'err'); }
+            });
+          });
+        }
+        renderSections();
+        box.querySelector('[data-add-section]').addEventListener('click', () => {
+          page.sections.push({ title: 'Titolo paragrafo', text: 'Descrizione lavoro', media: { type: 'none', youtubeId: '', videoSrc: '', imageSrc: '' } });
+          renderSections();
+        });
+      }
+      renderPageEditor();
+
+      hasPageCheckbox.addEventListener('change', (e) => {
+        if (e.target.checked) {
+          page = {
+            title: p.title,
+            trailer: { type: 'none', youtubeId: '', videoSrc: '', imageSrc: '' },
+            trailerLabel: 'Trailer',
+            downloadUrl: '', downloadLabel: 'Download',
+            description: '', facts: [], sections: []
+          };
+          state.projectPages.push(page);
+        } else {
+          const idx = state.projectPages.findIndex(pp => pp.title === p.title);
+          if (idx !== -1) state.projectPages.splice(idx, 1);
+          page = null;
+        }
+        renderPageEditor();
       });
     });
   }
@@ -627,6 +1003,76 @@
   }
 
   /* ---------- SKILLS / SOFTWARE (shared renderer) ---------- */
+  /* ---------- TAG CATEGORIES ---------- */
+  function renderTagCategories(){
+    const wrap = document.getElementById('tag-categories-list');
+    wrap.innerHTML = '';
+    state.tagCategories.forEach((c, i) => {
+      const row = document.createElement('div');
+      row.className = 'tag-cat-row';
+      row.innerHTML = `
+        <input type="color" class="tag-cat-swatch" value="${c.color}" title="Colore">
+        <input type="text" value="${escapeAttr(c.label)}" placeholder="Nome categoria">
+        <span class="tag-cat-key">${escapeHtml(c.key)}</span>
+        <button class="remove-btn" type="button" title="Rimuovi categoria">✕</button>
+      `;
+      const colorInput = row.querySelector('input[type=color]');
+      const labelInput = row.querySelector('input[type=text]');
+      const removeBtn = row.querySelector('.remove-btn');
+
+      colorInput.addEventListener('input', e => {
+        c.color = e.target.value;
+        refreshCategoryDependentUI();
+      });
+      labelInput.addEventListener('input', e => {
+        c.label = e.target.value;
+        refreshCategoryDependentUI();
+      });
+      removeBtn.addEventListener('click', () => {
+        state.tagCategories.splice(i, 1);
+        renderTagCategories();
+        refreshCategoryDependentUI();
+      });
+
+      wrap.appendChild(row);
+    });
+  }
+
+  /* Richiamata ogni volta che una categoria viene aggiunta, rinominata,
+     ricolorata o rimossa: rigenera tutte le tendine (Projects, Key Skills,
+     Software) così mostrano subito l'elenco aggiornato, mantenendo il
+     valore selezionato quando la categoria esiste ancora. */
+  function refreshCategoryDependentUI(){
+    renderProjects();
+    renderSkills();
+    renderSoftware();
+  }
+
+  document.getElementById('add-tag-category').addEventListener('click', () => {
+    const labelInput = document.getElementById('new-tag-label');
+    const colorInput = document.getElementById('new-tag-color');
+    const label = labelInput.value.trim();
+    if (!label) { setStatus('Dai un nome alla nuova categoria prima di crearla.', 'err'); return; }
+
+    let key = label.toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+    if (!key) key = 'categoria';
+    let uniqueKey = key, n = 2;
+    while (state.tagCategories.some(c => c.key === uniqueKey)) {
+      uniqueKey = `${key}-${n}`;
+      n++;
+    }
+
+    state.tagCategories.push({ key: uniqueKey, label, color: colorInput.value });
+    labelInput.value = '';
+    colorInput.value = '#4fd8ea';
+    renderTagCategories();
+    refreshCategoryDependentUI();
+    setStatus(`Categoria "${label}" creata.`, 'ok');
+  });
+
   function renderSimpleList(containerId, arr, rerenderFn){
     const wrap = document.getElementById(containerId);
     wrap.innerHTML = '';
@@ -635,7 +1081,7 @@
       row.className = 'tag-item';
       row.innerHTML = `
         <div><input type="text" value="${escapeAttr(s.name)}" placeholder="Nome"></div>
-        <div><select>${CATS.map(c => `<option value="${c}" ${c===s.cat?'selected':''}>${c}</option>`).join('')}</select></div>
+        <div><select>${getCategoryOptions(s.cat)}</select></div>
         <button class="remove-btn" type="button">✕</button>
       `;
       const input = row.querySelector('input');
@@ -667,6 +1113,7 @@
 
   function renderAll(){
     bindSimpleFields();
+    renderTagCategories();
     renderProjects();
     renderArticles();
     renderFacts();
@@ -685,6 +1132,7 @@
   }
 
   setupHeroBackgroundListeners();
+  setupParallaxListeners();
 
   document.getElementById('add-project').addEventListener('click', () => {
     state.projects.push({ title: 'Nuovo progetto', role: 'Ruolo', tags: [], cover: '' });

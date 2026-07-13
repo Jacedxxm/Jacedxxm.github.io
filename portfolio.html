@@ -63,6 +63,11 @@
     position:absolute; inset:-25% -10%;
     will-change:transform;
   }
+  .parallax-image{
+    background-size:cover; background-position:center; background-repeat:no-repeat;
+    opacity:0; transition:opacity .4s ease;
+  }
+  .parallax-image.has-image{ opacity:var(--parallax-opacity, 0.35); }
   .parallax-grid{
     background:
       repeating-linear-gradient(0deg, rgba(255,255,255,0.022) 0px, rgba(255,255,255,0.022) 1px, transparent 1px, transparent 48px),
@@ -430,6 +435,7 @@
     opacity:0;
     transform:translateY(28px);
     transition:opacity .5s ease, transform .5s ease, border-color .3s ease, box-shadow .3s ease;
+    color:inherit; text-decoration:none;
   }
   .card.in-view{ opacity:1; transform:translateY(0); animation:lock-pulse .7s ease-out .05s; }
   @keyframes lock-pulse{
@@ -758,6 +764,7 @@
 <body>
 
   <div class="parallax-bg" aria-hidden="true">
+    <div class="parallax-layer parallax-image" id="parallax-image" data-speed="0.1"></div>
     <div class="parallax-layer parallax-grid" data-speed="0.06"></div>
     <div class="parallax-layer parallax-glow" data-speed="0.16"></div>
   </div>
@@ -1098,7 +1105,61 @@
       text: "Per collaborazioni, ruoli aperti o semplicemente per fare due chiacchiere su combat e systems design.",
       email: "tuamail@esempio.com",
       buttonLabel: "Scrivimi una mail"
-    }
+    },
+    /* ---------- TAG CATEGORIES ----------
+       Colore usato per i tag dei progetti e per le card di Key Skills/Software.
+       Gestibili da admin.html nel pannello "Tag Categories": ogni nuova voce
+       creata lì appare qui automaticamente al prossimo export di data.json. */
+    tagCategories: [
+      { key: "design", label: "Design", color: "#b98cff" },
+      { key: "programming", label: "Programming", color: "#4fd8ea" },
+      { key: "vfx", label: "VFX", color: "#ffb64d" },
+      { key: "tools", label: "Tools", color: "#6bcf7f" }
+    ],
+    /* ---------- PARALLAX BACKGROUND IMAGE ----------
+       Livello immagine aggiuntivo dietro al sito, sopra griglia HUD e bagliori.
+       "imageSrc" è un percorso relativo (es. "assets/parallax-bg.jpg"): il file
+       va caricato a mano nella cartella assets/ della repo, data.json resta leggero. */
+    parallax: {
+      imageSrc: "",
+      speed: 0.1,
+      opacity: 0.35
+    },
+    /* ---------- PROJECT PAGES ----------
+       Una voce per progetto (associata tramite il titolo, deve corrispondere
+       esattamente a un titolo presente in "projects" qui sopra) attiva la
+       pagina di dettaglio cliccabile dalla card. Se un progetto non ha una
+       voce qui, la sua card resta statica (non cliccabile). */
+    projectPages: [
+      {
+        title: "Negative Edge",
+        trailer: { type: "youtube", youtubeId: "", videoSrc: "", imageSrc: "" },
+        trailerLabel: "Trailer",
+        downloadUrl: "",
+        downloadLabel: "Download",
+        description: "Sparatutto arena hardcore in terza persona con un twist narrativo: il giocatore è il villain.",
+        facts: [
+          { label: "Genere del gioco", value: "Third-person shooter arena" },
+          { label: "Piattaforme", value: "PC (Steam)" },
+          { label: "Il mio ruolo nel progetto", value: "Combat & Systems Designer" },
+          { label: "Tempo di sviluppo", value: "In corso" },
+          { label: "Dimensione Team", value: "15 persone" },
+          { label: "Nome Azienda/Team", value: "Villains Studio" }
+        ],
+        sections: [
+          {
+            title: "Combat design",
+            text: "Sistemi di combattimento leggibili prima ancora che bilanciati: telegraphing, feedback e leggibilità del danno.",
+            media: { type: "none", youtubeId: "", videoSrc: "", imageSrc: "" }
+          },
+          {
+            title: "Level design",
+            text: "Arene pensate per il ritmo del combattimento, con percorsi che favoriscono decisioni tattiche rapide.",
+            media: { type: "none", youtubeId: "", videoSrc: "", imageSrc: "" }
+          }
+        ]
+      }
+    ]
   };
 
   /* Prova a caricare data.json dalla stessa cartella. Se non esiste, non è
@@ -1117,7 +1178,31 @@
     return DEFAULT_DATA;
   }
 
+  function slugify(str){
+    return String(str || '')
+      .toLowerCase().trim()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+  }
+
   function renderSite(data) {
+    /* ---------- PARALLAX BACKGROUND IMAGE ---------- */
+    if (data.parallax) {
+      const parallaxImg = document.getElementById('parallax-image');
+      if (parallaxImg) {
+        if (data.parallax.imageSrc) {
+          parallaxImg.style.backgroundImage = `url('${data.parallax.imageSrc}')`;
+          parallaxImg.style.setProperty('--parallax-opacity', data.parallax.opacity != null ? data.parallax.opacity : 0.35);
+          parallaxImg.dataset.speed = data.parallax.speed != null ? data.parallax.speed : 0.1;
+          parallaxImg.classList.add('has-image');
+        } else {
+          parallaxImg.classList.remove('has-image');
+          parallaxImg.style.backgroundImage = '';
+        }
+      }
+    }
+
     /* ---------- HERO ---------- */
     if (data.hero) {
       const heroCyan = document.getElementById('hero-word-cyan');
@@ -1251,7 +1336,10 @@
     }
 
     /* ---------- SKILLS / SOFTWARE ---------- */
-    const catColorVar = { design: '--cat-design', programming: '--cat-programming', vfx: '--cat-vfx', tools: '--cat-tools' };
+    function colorForCat(cat){
+      const found = (data.tagCategories || []).find(c => c.key === cat);
+      return found ? found.color : '#9aa1ad';
+    }
     function renderSkillGrid(gridId, items) {
       const grid = document.getElementById(gridId);
       if (!grid || !items) return;
@@ -1259,7 +1347,7 @@
       items.forEach(s => {
         const card = document.createElement('div');
         card.className = 'skill-card';
-        card.style.setProperty('--skill-color', `var(${catColorVar[s.cat] || '--text-dim'})`);
+        card.style.setProperty('--skill-color', colorForCat(s.cat));
         card.innerHTML = `
           <div class="skill-top">
             <span class="skill-name">${s.name}</span>
@@ -1276,17 +1364,20 @@
     const grid = document.getElementById('card-grid');
     if (grid && data.projects) {
       grid.innerHTML = '';
+      const pages = data.projectPages || [];
       data.projects.forEach((p, i) => {
         const isFeatured = i === 0;
-        const card = document.createElement('div');
+        const hasDetailPage = pages.some(pp => slugify(pp.title) === slugify(p.title));
+        const card = document.createElement(hasDetailPage ? 'a' : 'div');
         card.className = 'card' + (isFeatured ? ' featured' : '');
+        if (hasDetailPage) card.href = `project.html?slug=${slugify(p.title)}`;
         card.style.transitionDelay = (i * 0.08) + 's';
 
         const coverStyle = p.cover ? `style="background-image:url('${p.cover}')"` : '';
         const coverLabel = p.cover ? '' : `<span class="placeholder-label">COVER — ${p.title.toUpperCase()}</span>`;
         const badge = isFeatured ? `<span class="featured-badge">Featured</span>` : '';
         const index = String(i + 1).padStart(2, '0');
-        const tagsHtml = (p.tags || []).map(t => `<span class="tag tag--${t.cat}">${t.label}</span>`).join('');
+        const tagsHtml = (p.tags || []).map(t => `<span class="tag" style="--tag-color:${colorForCat(t.cat)}">${t.label}</span>`).join('');
 
         card.innerHTML = `
           <div class="card-cover" ${coverStyle}>
