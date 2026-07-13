@@ -1,0 +1,210 @@
+{
+  "hero": {
+    "wordCyan": "Gameplay",
+    "wordRed": "Designer",
+    "subtitle": "Unreal Engine 5 · generazione procedurale · iterazione guidata dai dati.",
+    "readout": "SYSTEM ONLINE // 4 PROJECTS LOADED",
+    "bgType": "youtube",
+    "youtubeId": "VrhL2W6CBlg",
+    "videoSrc": "",
+    "imageSrc": ""
+  },
+  "projects": [
+    {
+      "title": "Ciao BRUH",
+      "role": "Game Designer — Villains Studio",
+      "tags": [
+        {
+          "label": "Ciao ciao",
+          "cat": "design"
+        },
+        {
+          "label": "Level Design",
+          "cat": "design"
+        },
+        {
+          "label": "UE5",
+          "cat": "programming"
+        }
+      ],
+      "cover": ""
+    },
+    {
+      "title": "Roguelike Action Game",
+      "role": "Combat & Systems Designer",
+      "tags": [
+        {
+          "label": "Systems Design",
+          "cat": "design"
+        },
+        {
+          "label": "Blueprint",
+          "cat": "programming"
+        },
+        {
+          "label": "Balancing",
+          "cat": "design"
+        }
+      ],
+      "cover": ""
+    },
+    {
+      "title": "Semi-Procedural Map Generator",
+      "role": "Systems Designer",
+      "tags": [
+        {
+          "label": "Procedural Generation",
+          "cat": "programming"
+        },
+        {
+          "label": "Tools",
+          "cat": "tools"
+        },
+        {
+          "label": "UE5",
+          "cat": "programming"
+        }
+      ],
+      "cover": ""
+    },
+    {
+      "title": "Debug Overlay Toolkit",
+      "role": "Technical / Combat Designer",
+      "tags": [
+        {
+          "label": "Blueprint",
+          "cat": "programming"
+        },
+        {
+          "label": "VFX Debug",
+          "cat": "vfx"
+        },
+        {
+          "label": "Velocity/Attack Arc",
+          "cat": "vfx"
+        }
+      ],
+      "cover": ""
+    }
+  ],
+  "moreLinks": {
+    "other": {
+      "label": "Other Projects",
+      "sub": "Prototipi, game jam, lavori minori",
+      "href": "#other-projects"
+    },
+    "qa": {
+      "label": "QA Testing",
+      "sub": "Bug hunting, playtest, report",
+      "href": "#qa-testing"
+    }
+  },
+  "articles": [
+    {
+      "title": "Player-Centric Pacing: un framework per il level design",
+      "excerpt": "Come UX, cognitive load e flow state si intrecciano nel pacing dei livelli — caso di studio su Half-Life 2.",
+      "tag": "Medium",
+      "url": "https://medium.com/@jacedxxm7/user-experience-in-game-design-player-centric-pacing-framework-2ad901e8a970"
+    }
+  ],
+  "about": {
+    "title": "Combat & systems designer, Warsaw.",
+    "text": "Progetto sistemi e combattimento per un action roguelike in terza persona...",
+    "status": "STATUS: AVAILABLE FOR PROJECTS",
+    "photo": "",
+    "facts": [
+      {
+        "label": "Location",
+        "value": "Warsaw, PL"
+      },
+      {
+        "label": "Ruolo",
+        "value": "Combat & Systems Designer"
+      },
+      {
+        "label": "Engine",
+        "value": "Unreal Engine 5 (Blueprint)"
+      },
+      {
+        "label": "Lingue",
+        "value": "Italiano / English"
+      }
+    ]
+  },
+  "qa": [
+    {
+      "q": "Che tipo di designer sei?",
+      "a": "Combat e systems designer..."
+    },
+    {
+      "q": "Che engine e strumenti usi?",
+      "a": "Unreal Engine 5, quasi interamente in Blueprint..."
+    },
+    {
+      "q": "Qual è la tua filosofia di design?",
+      "a": "\"Se il player muore e non sa perché, è un bug di design.\""
+    },
+    {
+      "q": "Sei disponibile per collaborazioni?",
+      "a": "Sì, per ruoli o progetti di combat/systems design..."
+    }
+  ],
+  "skills": [
+    {
+      "name": "Combat Design",
+      "cat": "design"
+    },
+    {
+      "name": "Systems Design",
+      "cat": "design"
+    },
+    {
+      "name": "UE5 Blueprint",
+      "cat": "programming"
+    },
+    {
+      "name": "Procedural Generation",
+      "cat": "programming"
+    },
+    {
+      "name": "Niagara VFX",
+      "cat": "vfx"
+    },
+    {
+      "name": "Rapid Prototyping",
+      "cat": "tools"
+    }
+  ],
+  "software": [
+    {
+      "name": "Unreal Engine 5",
+      "cat": "programming"
+    },
+    {
+      "name": "Blender",
+      "cat": "vfx"
+    },
+    {
+      "name": "JetBrains Rider",
+      "cat": "programming"
+    },
+    {
+      "name": "Git",
+      "cat": "tools"
+    },
+    {
+      "name": "Obsidian",
+      "cat": "tools"
+    },
+    {
+      "name": "Steamworks",
+      "cat": "tools"
+    }
+  ],
+  "contact": {
+    "title": "Parliamo di un progetto.",
+    "text": "Per collaborazioni, ruoli aperti o semplicemente per fare due chiacchiere su combat e systems design.",
+    "email": "tuamail@esempio.com",
+    "buttonLabel": "Scrivimi una mail"
+  }
+}
