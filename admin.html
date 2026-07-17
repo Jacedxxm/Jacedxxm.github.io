@@ -12,6 +12,7 @@
     --font-mono: 'Consolas', 'SFMono-Regular', Menlo, monospace;
   }
   *{box-sizing:border-box;}
+  a{ color:inherit; text-decoration:none; }
   body{
     margin:0; background:var(--bg); color:var(--text);
     font-family:var(--font-body); padding:32px 20px 120px;
@@ -132,10 +133,22 @@
   <h1>Admin — Contenuti del portfolio</h1>
   <p class="subtitle">
     Modifica qui i contenuti del sito, poi clicca <strong>"Scarica JSON"</strong> per ottenere un file
-    <code>data.json</code> aggiornato. Carica quel file nella stessa cartella di <code>portfolio.html</code>
+    <code>data.json</code> aggiornato. Carica quel file nella stessa cartella di <code>index.html</code>
     sul tuo hosting (sovrascrivendo quello vecchio, se presente) e il sito si aggiorna automaticamente.
     Nessun contenuto viene inviato online da questa pagina: tutto resta nel tuo browser finché non scarichi il file.
   </p>
+
+  <!-- BRAND / LOGO -->
+  <section class="block">
+    <h2>Brand</h2>
+    <p class="block-hint">Il logo e il nome mostrati in alto a sinistra nella barra di navigazione, su tutte le pagine del sito.</p>
+    <label>Nome</label>
+    <input type="text" id="brand-name-input">
+    <label>Logo</label>
+    <div class="cover-preview" id="brand-logo-preview" style="height:70px;">Clicca per caricare un'immagine (lascia vuoto per usare l'icona di default)</div>
+    <input type="file" id="brand-logo-file" accept="image/*" style="display:none">
+    <button class="btn btn--small btn--danger" id="brand-logo-remove" type="button" style="margin-top:12px">Rimuovi logo (torna all'icona di default)</button>
+  </section>
 
   <!-- TAG CATEGORIES -->
   <section class="block" id="tag-categories-block">
@@ -187,6 +200,20 @@
     <button class="btn btn--small btn--danger" id="parallax-remove" type="button" style="margin-top:14px">Rimuovi immagine di sfondo</button>
   </section>
 
+  <!-- RESUME PDF -->
+  <section class="block">
+    <h2>Resumè (PDF)</h2>
+    <p class="block-hint">
+      Il PDF mostrato nella pagina <code>resume.html</code>, collegata al link "Resumè" in alto.
+      Come per video e parallax, questa pagina registra solo il <strong>percorso</strong> del file:
+      dopo aver scaricato il JSON, carica anche il PDF vero nella cartella <code>assets/</code> della repo,
+      con lo stesso nome.
+    </p>
+    <label>File PDF</label>
+    <div class="cover-preview" id="resume-pdf-preview" style="height:70px;">Clicca per scegliere un file PDF</div>
+    <input type="file" id="resume-pdf-file" accept="application/pdf" style="display:none">
+  </section>
+
   <!-- HERO -->
   <section class="block">
     <h2>Hero</h2>
@@ -231,7 +258,7 @@
       <p class="block-hint" style="margin:6px 0 0">
         Il video <strong>non</strong> viene incluso nel file JSON (per non appesantirlo): questa pagina si limita
         a impostare il nome del file. Dopo aver scaricato <code>data.json</code>, carica anche il file video
-        <strong>con lo stesso nome</strong> nella cartella <code>assets/</code>, accanto a <code>portfolio.html</code>.
+        <strong>con lo stesso nome</strong> nella cartella <code>assets/</code>, accanto a <code>index.html</code>.
       </p>
     </div>
 
@@ -315,6 +342,28 @@
     <button class="add-btn" id="add-software">+ Aggiungi software</button>
   </section>
 
+  <!-- OTHER PROJECTS -->
+  <section class="block">
+    <h2>Other Projects</h2>
+    <p class="block-hint">
+      La pagina sintetica <code>other-projects.html</code>, collegata al riquadro "Other Projects" della home.
+      Ogni progetto qui sotto ha un carosello di immagini/video che scorre in automatico ma è anche navigabile a mano.
+    </p>
+    <div id="other-projects-list"></div>
+    <button class="add-btn" id="add-other-project">+ Aggiungi progetto</button>
+  </section>
+
+  <!-- QA TESTING -->
+  <section class="block">
+    <h2>QA Testing</h2>
+    <p class="block-hint">
+      La pagina sintetica <code>qa-testing.html</code>, collegata al riquadro "QA Testing" della home.
+      Stessa identica struttura di Other Projects: un carosello di immagini/video per ogni sessione di test/playtest.
+    </p>
+    <div id="qa-testing-list"></div>
+    <button class="add-btn" id="add-qa-testing">+ Aggiungi sessione</button>
+  </section>
+
   <!-- CONTACT -->
   <section class="block">
     <h2>Contact</h2>
@@ -329,7 +378,7 @@
   </section>
 
   <p class="footer-note">
-    Suggerimento: apri questa pagina dalla stessa cartella dove tieni <code>portfolio.html</code> e <code>data.json</code> —
+    Suggerimento: apri questa pagina dalla stessa cartella dove tieni <code>index.html</code> e <code>data.json</code> —
     così "Carica data.json esistente" trova il file automaticamente. Se la apri altrove, usa "Carica file JSON dal computer".
   </p>
 
@@ -345,6 +394,7 @@
   }
 
   const DEFAULT_DATA = {
+    brand: { name: "Jace", logoSrc: "" },
     hero: {
       wordCyan: "Gameplay", wordRed: "Designer",
       subtitle: "Unreal Engine 5 · generazione procedurale · iterazione guidata dai dati.",
@@ -362,8 +412,8 @@
         tags: [{label:"Blueprint",cat:"programming"},{label:"VFX Debug",cat:"vfx"},{label:"Velocity/Attack Arc",cat:"vfx"}], cover: "" }
     ],
     moreLinks: {
-      other: { label: "Other Projects", sub: "Prototipi, game jam, lavori minori", href: "#other-projects" },
-      qa: { label: "QA Testing", sub: "Bug hunting, playtest, report", href: "#qa-testing" }
+      other: { label: "Other Projects", sub: "Prototipi, game jam, lavori minori", href: "other-projects.html" },
+      qa: { label: "QA Testing", sub: "Bug hunting, playtest, report", href: "qa-testing.html" }
     },
     articles: [
       { title: "Player-Centric Pacing: un framework per il level design",
@@ -411,7 +461,10 @@
       { key: "vfx", label: "VFX", color: "#ffb64d" },
       { key: "tools", label: "Tools", color: "#6bcf7f" }
     ],
-    parallax: { imageSrc: "", speed: 0.1, opacity: 0.35 }
+    parallax: { imageSrc: "", speed: 0.1, opacity: 0.35 },
+    resume: { pdfSrc: "assets/resume.pdf" },
+    otherProjects: [],
+    qaTesting: []
   };
 
   let state = JSON.parse(JSON.stringify(DEFAULT_DATA));
@@ -562,6 +615,67 @@
     });
   }
 
+  /* ---------- BRAND (logo + nome) ---------- */
+  function syncBrandUI(){
+    document.getElementById('brand-name-input').value = state.brand.name || '';
+    const preview = document.getElementById('brand-logo-preview');
+    if (state.brand.logoSrc) {
+      preview.style.backgroundImage = `url('${state.brand.logoSrc}')`;
+      preview.style.backgroundSize = 'contain';
+      preview.style.backgroundRepeat = 'no-repeat';
+      preview.style.backgroundPosition = 'center';
+      preview.textContent = '';
+    } else {
+      preview.style.backgroundImage = '';
+      preview.textContent = "Clicca per caricare un'immagine (lascia vuoto per usare l'icona di default)";
+    }
+  }
+
+  function setupBrandListeners(){
+    document.getElementById('brand-name-input').addEventListener('input', (e) => {
+      state.brand.name = e.target.value;
+    });
+    document.getElementById('brand-logo-preview').addEventListener('click', () => {
+      document.getElementById('brand-logo-file').click();
+    });
+    document.getElementById('brand-logo-file').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      setStatus('Comprimo immagine…');
+      try {
+        state.brand.logoSrc = await fileToCompressedDataURL(file, 200, 0.9);
+        syncBrandUI();
+        setStatus('Logo caricato.', 'ok');
+      } catch (err) { setStatus('Errore caricando il logo.', 'err'); }
+    });
+    document.getElementById('brand-logo-remove').addEventListener('click', () => {
+      state.brand.logoSrc = '';
+      syncBrandUI();
+      setStatus('Logo rimosso, tornerà l\'icona di default.', 'ok');
+    });
+  }
+
+  /* ---------- RESUMÈ PDF ---------- */
+  function syncResumeUI(){
+    const preview = document.getElementById('resume-pdf-preview');
+    preview.textContent = state.resume.pdfSrc
+      ? `File impostato: ${state.resume.pdfSrc} — clicca per cambiarlo`
+      : 'Clicca per scegliere un file PDF';
+  }
+
+  function setupResumeListeners(){
+    document.getElementById('resume-pdf-preview').addEventListener('click', () => {
+      document.getElementById('resume-pdf-file').click();
+    });
+    document.getElementById('resume-pdf-file').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      state.resume.pdfSrc = 'assets/' + file.name;
+      syncResumeUI();
+      setStatus(`Percorso PDF impostato: assets/${file.name} — ricordati di caricare anche il file vero nella cartella assets/ della repo.`, 'ok');
+    });
+  }
+
   function bindSimpleFields(){
     bindText('hero-wordCyan', 'hero.wordCyan');
     bindText('hero-wordRed', 'hero.wordRed');
@@ -570,6 +684,8 @@
     bindText('hero-youtubeId', 'hero.youtubeId');
     syncHeroBackgroundUI();
     syncParallaxUI();
+    syncResumeUI();
+    syncBrandUI();
 
     bindText('more-other-label', 'moreLinks.other.label');
     bindText('more-other-sub', 'moreLinks.other.sub');
@@ -719,7 +835,7 @@
           <input type="text" data-download-url>
           <label>Descrizione progetto/gioco</label>
           <textarea data-page-description placeholder="Testo normale, oppure elenco puntato scrivendo ogni voce su una riga a parte iniziando con - (es.&#10;- Genere: Action Roguelike&#10;- Piattaforme: PC)"></textarea>
-          <p class="block-hint" style="margin:-8px 0 14px">Per un elenco puntato scrivi ogni voce su una riga separata iniziando con "- " (trattino e spazio). Una riga vuota separa due paragrafi.</p>
+          <p class="block-hint" style="margin:-8px 0 14px">Per un elenco puntato scrivi ogni voce su una riga separata iniziando con "- " (trattino e spazio). Una riga vuota separa due paragrafi. Per il grassetto usa **parola** su 2-3 parole chiave per paragrafo, non su frasi intere.</p>
           <label>Fatti rapidi (genere, piattaforme, ruolo, tempo, team, studio...)</label>
           <div data-facts></div>
           <button class="add-btn" type="button" data-add-fact>+ Aggiungi fatto</button>
@@ -824,7 +940,7 @@
               <input type="text" data-s-title value="${escapeAttr(s.title)}">
               <label>Descrizione lavoro</label>
               <textarea data-s-text placeholder="Testo normale, oppure elenco puntato con righe che iniziano con - ">${escapeHtml(s.text)}</textarea>
-              <p class="block-hint" style="margin:-8px 0 10px">Per un elenco puntato scrivi ogni voce su una riga separata iniziando con "- ".</p>
+              <p class="block-hint" style="margin:-8px 0 10px">Per un elenco puntato scrivi ogni voce su una riga separata iniziando con "- ". Per il grassetto usa **parola**.</p>
               <label>Media</label>
               <select data-s-media-type>
                 <option value="none">Nessuno</option>
@@ -955,6 +1071,363 @@
       card.querySelector('[data-field="tag"]').addEventListener('input', e => a.tag = e.target.value);
       card.querySelector('[data-field="url"]').addEventListener('input', e => a.url = e.target.value);
       card.querySelector('[data-remove]').addEventListener('click', () => { state.articles.splice(i,1); renderArticles(); });
+    });
+  }
+
+  /* ---------- OTHER PROJECTS (pagina sintetica other-projects.html) ---------- */
+  function renderOtherProjects(){
+    const wrap = document.getElementById('other-projects-list');
+    wrap.innerHTML = '';
+    state.otherProjects.forEach((entry, i) => {
+      const card = document.createElement('div');
+      card.className = 'item-card';
+      card.innerHTML = `
+        <div class="item-top">
+          <span class="item-label">Progetto ${i+1}</span>
+          <div>
+            <button class="remove-btn" data-up>↑</button>
+            <button class="remove-btn" data-down>↓</button>
+            <button class="remove-btn" data-remove>✕</button>
+          </div>
+        </div>
+        <label>Titolo</label>
+        <input type="text" data-field="title" value="${escapeAttr(entry.title)}">
+
+        <label>Immagini/video del carosello</label>
+        <div data-media></div>
+        <button class="add-btn" type="button" data-add-media>+ Aggiungi immagine/video</button>
+
+        <div class="row" style="margin-top:14px">
+          <div>
+            <label>Etichetta bottone trailer</label>
+            <input type="text" data-field="trailerLabel" value="${escapeAttr(entry.trailerLabel || 'Trailer')}">
+          </div>
+          <div>
+            <label>Etichetta bottone download</label>
+            <input type="text" data-field="downloadLabel" value="${escapeAttr(entry.downloadLabel || 'Download')}">
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Link trailer (lascia vuoto per non mostrare il bottone)</label>
+            <input type="text" data-field="trailerUrl" value="${escapeAttr(entry.trailerUrl)}">
+          </div>
+          <div>
+            <label>Link download (lascia vuoto per non mostrare il bottone)</label>
+            <input type="text" data-field="downloadUrl" value="${escapeAttr(entry.downloadUrl)}">
+          </div>
+        </div>
+
+        <label>Descrizione progetto/gioco</label>
+        <textarea data-field="description" placeholder="Testo normale, o elenco puntato con righe che iniziano con - ">${escapeHtml(entry.description)}</textarea>
+        <p class="block-hint" style="margin:-8px 0 10px">Per un elenco puntato usa righe che iniziano con "- ". Per il grassetto usa **parola**.</p>
+
+        <label>Fatti rapidi</label>
+        <div data-facts></div>
+        <button class="add-btn" type="button" data-add-fact>+ Aggiungi fatto</button>
+
+        <label style="margin-top:14px">Responsabilità e cose fatte</label>
+        <textarea data-field="responsibilities" placeholder="Elenco puntato: ogni riga che inizia con - diventa un punto elenco">${escapeHtml(entry.responsibilities)}</textarea>
+        <p class="block-hint" style="margin:-8px 0 0">Stessa sintassi: righe con "- " per l'elenco puntato, **parola** per il grassetto.</p>
+      `;
+      wrap.appendChild(card);
+
+      card.querySelector('[data-field="title"]').addEventListener('input', e => entry.title = e.target.value);
+      card.querySelector('[data-field="trailerLabel"]').addEventListener('input', e => entry.trailerLabel = e.target.value);
+      card.querySelector('[data-field="downloadLabel"]').addEventListener('input', e => entry.downloadLabel = e.target.value);
+      card.querySelector('[data-field="trailerUrl"]').addEventListener('input', e => entry.trailerUrl = e.target.value);
+      card.querySelector('[data-field="downloadUrl"]').addEventListener('input', e => entry.downloadUrl = e.target.value);
+      card.querySelector('[data-field="description"]').addEventListener('input', e => entry.description = e.target.value);
+      card.querySelector('[data-field="responsibilities"]').addEventListener('input', e => entry.responsibilities = e.target.value);
+      card.querySelector('[data-up]').addEventListener('click', () => { moveItem(state.otherProjects, i, -1); renderOtherProjects(); });
+      card.querySelector('[data-down]').addEventListener('click', () => { moveItem(state.otherProjects, i, 1); renderOtherProjects(); });
+      card.querySelector('[data-remove]').addEventListener('click', () => { state.otherProjects.splice(i,1); renderOtherProjects(); });
+
+      /* ---- media list (carosello) ---- */
+      const mediaWrap = card.querySelector('[data-media]');
+      function renderMedia(){
+        mediaWrap.innerHTML = '';
+        (entry.media || []).forEach((m, mi) => {
+          const mBox = document.createElement('div');
+          mBox.className = 'item-card';
+          mBox.innerHTML = `
+            <div class="item-top">
+              <span class="item-label">Slide ${mi+1}</span>
+              <button class="remove-btn" type="button" data-m-remove>✕</button>
+            </div>
+            <select data-m-type>
+              <option value="none">Nessuno (placeholder)</option>
+              <option value="image">Immagine</option>
+              <option value="video">File video caricato (locale)</option>
+              <option value="youtube">Video YouTube</option>
+            </select>
+            <div data-m-image style="display:none">
+              <div class="cover-preview" data-m-image-preview style="height:80px; margin-top:8px;">Clicca per caricare un'immagine</div>
+              <input type="file" accept="image/*" data-m-image-file style="display:none">
+            </div>
+            <div data-m-video style="display:none">
+              <div class="cover-preview" data-m-video-preview style="height:60px; margin-top:8px;">Clicca per scegliere un file video</div>
+              <input type="file" accept="video/*" data-m-video-file style="display:none">
+            </div>
+            <div data-m-youtube style="display:none">
+              <input type="text" data-m-youtubeid placeholder="ID video YouTube" style="margin-top:8px">
+            </div>
+          `;
+          mediaWrap.appendChild(mBox);
+
+          const typeSel = mBox.querySelector('[data-m-type]');
+          typeSel.value = m.type || 'none';
+          function syncMediaFields(){
+            mBox.querySelector('[data-m-image]').style.display = m.type === 'image' ? '' : 'none';
+            mBox.querySelector('[data-m-video]').style.display = m.type === 'video' ? '' : 'none';
+            mBox.querySelector('[data-m-youtube]').style.display = m.type === 'youtube' ? '' : 'none';
+            const ip = mBox.querySelector('[data-m-image-preview]');
+            if (m.imageSrc) { ip.style.backgroundImage = `url('${m.imageSrc}')`; ip.style.backgroundSize = 'cover'; ip.textContent = ''; }
+            else { ip.style.backgroundImage = ''; ip.textContent = "Clicca per caricare un'immagine"; }
+            const vp = mBox.querySelector('[data-m-video-preview]');
+            vp.textContent = m.videoSrc ? `File: ${m.videoSrc} — clicca per cambiare` : 'Clicca per scegliere un file video';
+          }
+          syncMediaFields();
+          typeSel.addEventListener('change', e => { m.type = e.target.value; syncMediaFields(); });
+
+          mBox.querySelector('[data-m-image-preview]').addEventListener('click', () => mBox.querySelector('[data-m-image-file]').click());
+          mBox.querySelector('[data-m-image-file]').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            setStatus('Comprimo immagine…');
+            try {
+              m.imageSrc = await fileToCompressedDataURL(file, 1400, 0.8);
+              syncMediaFields();
+              setStatus('Immagine caricata.', 'ok');
+            } catch (err) { setStatus('Errore caricando l\'immagine.', 'err'); }
+          });
+
+          mBox.querySelector('[data-m-video-preview]').addEventListener('click', () => mBox.querySelector('[data-m-video-file]').click());
+          mBox.querySelector('[data-m-video-file]').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            m.videoSrc = 'assets/' + file.name;
+            syncMediaFields();
+            setStatus(`Percorso video impostato: assets/${file.name} — carica anche il file vero in assets/.`, 'ok');
+          });
+
+          const ytInput = mBox.querySelector('[data-m-youtubeid]');
+          ytInput.value = m.youtubeId || '';
+          ytInput.addEventListener('input', e => m.youtubeId = e.target.value);
+
+          mBox.querySelector('[data-m-remove]').addEventListener('click', () => { entry.media.splice(mi, 1); renderMedia(); });
+        });
+      }
+      renderMedia();
+      card.querySelector('[data-add-media]').addEventListener('click', () => {
+        if (!entry.media) entry.media = [];
+        entry.media.push({ type: 'none', imageSrc: '', videoSrc: '', youtubeId: '' });
+        renderMedia();
+      });
+
+      /* ---- fatti rapidi ---- */
+      const factsWrap = card.querySelector('[data-facts]');
+      function renderEntryFacts(){
+        factsWrap.innerHTML = '';
+        (entry.facts || []).forEach((f, fi) => {
+          const row = document.createElement('div');
+          row.className = 'tag-item';
+          row.innerHTML = `
+            <div><input type="text" value="${escapeAttr(f.label)}" placeholder="Etichetta"></div>
+            <div><input type="text" value="${escapeAttr(f.value)}" placeholder="Valore"></div>
+            <button class="remove-btn" type="button">✕</button>
+          `;
+          const [labelInput, valueInput] = row.querySelectorAll('input');
+          labelInput.addEventListener('input', e => f.label = e.target.value);
+          valueInput.addEventListener('input', e => f.value = e.target.value);
+          row.querySelector('.remove-btn').addEventListener('click', () => { entry.facts.splice(fi,1); renderEntryFacts(); });
+          factsWrap.appendChild(row);
+        });
+      }
+      renderEntryFacts();
+      card.querySelector('[data-add-fact]').addEventListener('click', () => {
+        if (!entry.facts) entry.facts = [];
+        entry.facts.push({ label: 'Etichetta', value: 'Valore' });
+        renderEntryFacts();
+      });
+    });
+  }
+
+  function renderQaTesting(){
+    const wrap = document.getElementById('qa-testing-list');
+    wrap.innerHTML = '';
+    state.qaTesting.forEach((entry, i) => {
+      const card = document.createElement('div');
+      card.className = 'item-card';
+      card.innerHTML = `
+        <div class="item-top">
+          <span class="item-label">Sessione ${i+1}</span>
+          <div>
+            <button class="remove-btn" data-up>↑</button>
+            <button class="remove-btn" data-down>↓</button>
+            <button class="remove-btn" data-remove>✕</button>
+          </div>
+        </div>
+        <label>Titolo</label>
+        <input type="text" data-field="title" value="${escapeAttr(entry.title)}">
+
+        <label>Immagini/video del carosello</label>
+        <div data-media></div>
+        <button class="add-btn" type="button" data-add-media>+ Aggiungi immagine/video</button>
+
+        <div class="row" style="margin-top:14px">
+          <div>
+            <label>Etichetta bottone trailer</label>
+            <input type="text" data-field="trailerLabel" value="${escapeAttr(entry.trailerLabel || 'Trailer')}">
+          </div>
+          <div>
+            <label>Etichetta bottone download</label>
+            <input type="text" data-field="downloadLabel" value="${escapeAttr(entry.downloadLabel || 'Download')}">
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Link trailer (lascia vuoto per non mostrare il bottone)</label>
+            <input type="text" data-field="trailerUrl" value="${escapeAttr(entry.trailerUrl)}">
+          </div>
+          <div>
+            <label>Link download (lascia vuoto per non mostrare il bottone)</label>
+            <input type="text" data-field="downloadUrl" value="${escapeAttr(entry.downloadUrl)}">
+          </div>
+        </div>
+
+        <label>Descrizione progetto/gioco</label>
+        <textarea data-field="description" placeholder="Testo normale, o elenco puntato con righe che iniziano con - ">${escapeHtml(entry.description)}</textarea>
+        <p class="block-hint" style="margin:-8px 0 10px">Per un elenco puntato usa righe che iniziano con "- ". Per il grassetto usa **parola**.</p>
+
+        <label>Fatti rapidi</label>
+        <div data-facts></div>
+        <button class="add-btn" type="button" data-add-fact>+ Aggiungi fatto</button>
+
+        <label style="margin-top:14px">Responsabilità e cose fatte</label>
+        <textarea data-field="responsibilities" placeholder="Elenco puntato: ogni riga che inizia con - diventa un punto elenco">${escapeHtml(entry.responsibilities)}</textarea>
+        <p class="block-hint" style="margin:-8px 0 0">Stessa sintassi: righe con "- " per l'elenco puntato, **parola** per il grassetto.</p>
+      `;
+      wrap.appendChild(card);
+
+      card.querySelector('[data-field="title"]').addEventListener('input', e => entry.title = e.target.value);
+      card.querySelector('[data-field="trailerLabel"]').addEventListener('input', e => entry.trailerLabel = e.target.value);
+      card.querySelector('[data-field="downloadLabel"]').addEventListener('input', e => entry.downloadLabel = e.target.value);
+      card.querySelector('[data-field="trailerUrl"]').addEventListener('input', e => entry.trailerUrl = e.target.value);
+      card.querySelector('[data-field="downloadUrl"]').addEventListener('input', e => entry.downloadUrl = e.target.value);
+      card.querySelector('[data-field="description"]').addEventListener('input', e => entry.description = e.target.value);
+      card.querySelector('[data-field="responsibilities"]').addEventListener('input', e => entry.responsibilities = e.target.value);
+      card.querySelector('[data-up]').addEventListener('click', () => { moveItem(state.qaTesting, i, -1); renderQaTesting(); });
+      card.querySelector('[data-down]').addEventListener('click', () => { moveItem(state.qaTesting, i, 1); renderQaTesting(); });
+      card.querySelector('[data-remove]').addEventListener('click', () => { state.qaTesting.splice(i,1); renderQaTesting(); });
+
+      /* ---- media list (carosello) ---- */
+      const mediaWrap = card.querySelector('[data-media]');
+      function renderMedia(){
+        mediaWrap.innerHTML = '';
+        (entry.media || []).forEach((m, mi) => {
+          const mBox = document.createElement('div');
+          mBox.className = 'item-card';
+          mBox.innerHTML = `
+            <div class="item-top">
+              <span class="item-label">Slide ${mi+1}</span>
+              <button class="remove-btn" type="button" data-m-remove>✕</button>
+            </div>
+            <select data-m-type>
+              <option value="none">Nessuno (placeholder)</option>
+              <option value="image">Immagine</option>
+              <option value="video">File video caricato (locale)</option>
+              <option value="youtube">Video YouTube</option>
+            </select>
+            <div data-m-image style="display:none">
+              <div class="cover-preview" data-m-image-preview style="height:80px; margin-top:8px;">Clicca per caricare un'immagine</div>
+              <input type="file" accept="image/*" data-m-image-file style="display:none">
+            </div>
+            <div data-m-video style="display:none">
+              <div class="cover-preview" data-m-video-preview style="height:60px; margin-top:8px;">Clicca per scegliere un file video</div>
+              <input type="file" accept="video/*" data-m-video-file style="display:none">
+            </div>
+            <div data-m-youtube style="display:none">
+              <input type="text" data-m-youtubeid placeholder="ID video YouTube" style="margin-top:8px">
+            </div>
+          `;
+          mediaWrap.appendChild(mBox);
+
+          const typeSel = mBox.querySelector('[data-m-type]');
+          typeSel.value = m.type || 'none';
+          function syncMediaFields(){
+            mBox.querySelector('[data-m-image]').style.display = m.type === 'image' ? '' : 'none';
+            mBox.querySelector('[data-m-video]').style.display = m.type === 'video' ? '' : 'none';
+            mBox.querySelector('[data-m-youtube]').style.display = m.type === 'youtube' ? '' : 'none';
+            const ip = mBox.querySelector('[data-m-image-preview]');
+            if (m.imageSrc) { ip.style.backgroundImage = `url('${m.imageSrc}')`; ip.style.backgroundSize = 'cover'; ip.textContent = ''; }
+            else { ip.style.backgroundImage = ''; ip.textContent = "Clicca per caricare un'immagine"; }
+            const vp = mBox.querySelector('[data-m-video-preview]');
+            vp.textContent = m.videoSrc ? `File: ${m.videoSrc} — clicca per cambiare` : 'Clicca per scegliere un file video';
+          }
+          syncMediaFields();
+          typeSel.addEventListener('change', e => { m.type = e.target.value; syncMediaFields(); });
+
+          mBox.querySelector('[data-m-image-preview]').addEventListener('click', () => mBox.querySelector('[data-m-image-file]').click());
+          mBox.querySelector('[data-m-image-file]').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            setStatus('Comprimo immagine…');
+            try {
+              m.imageSrc = await fileToCompressedDataURL(file, 1400, 0.8);
+              syncMediaFields();
+              setStatus('Immagine caricata.', 'ok');
+            } catch (err) { setStatus('Errore caricando l\'immagine.', 'err'); }
+          });
+
+          mBox.querySelector('[data-m-video-preview]').addEventListener('click', () => mBox.querySelector('[data-m-video-file]').click());
+          mBox.querySelector('[data-m-video-file]').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            m.videoSrc = 'assets/' + file.name;
+            syncMediaFields();
+            setStatus(`Percorso video impostato: assets/${file.name} — carica anche il file vero in assets/.`, 'ok');
+          });
+
+          const ytInput = mBox.querySelector('[data-m-youtubeid]');
+          ytInput.value = m.youtubeId || '';
+          ytInput.addEventListener('input', e => m.youtubeId = e.target.value);
+
+          mBox.querySelector('[data-m-remove]').addEventListener('click', () => { entry.media.splice(mi, 1); renderMedia(); });
+        });
+      }
+      renderMedia();
+      card.querySelector('[data-add-media]').addEventListener('click', () => {
+        if (!entry.media) entry.media = [];
+        entry.media.push({ type: 'none', imageSrc: '', videoSrc: '', youtubeId: '' });
+        renderMedia();
+      });
+
+      /* ---- fatti rapidi ---- */
+      const factsWrap = card.querySelector('[data-facts]');
+      function renderEntryFacts(){
+        factsWrap.innerHTML = '';
+        (entry.facts || []).forEach((f, fi) => {
+          const row = document.createElement('div');
+          row.className = 'tag-item';
+          row.innerHTML = `
+            <div><input type="text" value="${escapeAttr(f.label)}" placeholder="Etichetta"></div>
+            <div><input type="text" value="${escapeAttr(f.value)}" placeholder="Valore"></div>
+            <button class="remove-btn" type="button">✕</button>
+          `;
+          const [labelInput, valueInput] = row.querySelectorAll('input');
+          labelInput.addEventListener('input', e => f.label = e.target.value);
+          valueInput.addEventListener('input', e => f.value = e.target.value);
+          row.querySelector('.remove-btn').addEventListener('click', () => { entry.facts.splice(fi,1); renderEntryFacts(); });
+          factsWrap.appendChild(row);
+        });
+      }
+      renderEntryFacts();
+      card.querySelector('[data-add-fact]').addEventListener('click', () => {
+        if (!entry.facts) entry.facts = [];
+        entry.facts.push({ label: 'Etichetta', value: 'Valore' });
+        renderEntryFacts();
+      });
     });
   }
 
@@ -1120,6 +1593,8 @@
     renderQA();
     renderSkills();
     renderSoftware();
+    renderOtherProjects();
+    renderQaTesting();
 
     const aboutPreview = document.getElementById('about-photo-preview');
     if (state.about.photo) {
@@ -1133,6 +1608,8 @@
 
   setupHeroBackgroundListeners();
   setupParallaxListeners();
+  setupResumeListeners();
+  setupBrandListeners();
 
   document.getElementById('add-project').addEventListener('click', () => {
     state.projects.push({ title: 'Nuovo progetto', role: 'Ruolo', tags: [], cover: '' });
@@ -1141,6 +1618,27 @@
   document.getElementById('add-article').addEventListener('click', () => {
     state.articles.push({ title: 'Nuovo articolo', excerpt: '', tag: 'Medium', url: '' });
     renderArticles();
+  });
+
+  document.getElementById('add-other-project').addEventListener('click', () => {
+    state.otherProjects.push({
+      title: 'Nuovo progetto',
+      media: [],
+      trailerLabel: 'Trailer', trailerUrl: '',
+      downloadLabel: 'Download', downloadUrl: '',
+      description: '', facts: [], responsibilities: ''
+    });
+    renderOtherProjects();
+  });
+  document.getElementById('add-qa-testing').addEventListener('click', () => {
+    state.qaTesting.push({
+      title: 'Nuova sessione',
+      media: [],
+      trailerLabel: 'Trailer', trailerUrl: '',
+      downloadLabel: 'Download', downloadUrl: '',
+      description: '', facts: [], responsibilities: ''
+    });
+    renderQaTesting();
   });
   document.getElementById('add-fact').addEventListener('click', () => {
     state.about.facts.push({ label: 'Etichetta', value: 'Valore' });

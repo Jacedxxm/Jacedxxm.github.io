@@ -9,22 +9,23 @@
 <style>
 
   :root{
-    --bg:        #0a0c0f;
-    --panel:     #12151a;
-    --panel-2:   #171b21;
-    --line:      #262b31;
-    --line-soft: #1c2026;
-    --text:      #e7ebee;
-    --text-dim:  #8b939c;
-    --text-faint:#5b6269;
-    --cyan:      #4fd8ea;
-    --red:       #ff5b4d;
+    --bg:        #0a0a0a;
+    --panel:     #131313;
+    --panel-2:   #191919;
+    --line:      #272727;
+    --line-soft: #1c1c1c;
+    --text:      #f2f2f0;
+    --text-dim:  #96938f;
+    --text-faint:#5c5a57;
+    --cyan:      #c81e2b;
+    --red:       #c81e2b;
     --font-display: 'Space Grotesk', sans-serif;
     --font-body: 'Inter', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
   }
 
   *{ margin:0; padding:0; box-sizing:border-box; }
+  a{ color:inherit; text-decoration:none; }
   html{ scroll-behavior:smooth; }
   body{
     background:var(--bg); color:var(--text); font-family:var(--font-body);
@@ -47,11 +48,6 @@
     font-family:var(--font-display); font-weight:600; font-size:16px; letter-spacing:0.02em;
     color:var(--text); display:flex; align-items:center; gap:8px;
   }
-  .nav-name .dot{
-    width:6px; height:6px; border-radius:50%; background:var(--red);
-    box-shadow:0 0 8px var(--red); animation:blink 2.4s infinite ease-in-out;
-  }
-  @keyframes blink{ 0%,100%{opacity:1;} 50%{opacity:.25;} }
   .nav-links{ display:flex; gap:32px; align-items:center; }
   .nav-links a{
     font-family:var(--font-mono); font-size:12px; letter-spacing:0.08em; text-transform:uppercase;
@@ -59,17 +55,10 @@
   }
   .nav-links a::after{
     content:''; position:absolute; left:0; bottom:0; width:0; height:1px;
-    background:var(--cyan); transition:width .25s ease;
+    background:var(--red); transition:width .25s ease;
   }
   .nav-links a:hover{ color:var(--text); }
   .nav-links a:hover::after{ width:100%; }
-
-  /* ============ SHARED ============ */
-  .card-corner{ position:absolute; width:13px; height:13px; border-color:var(--cyan); opacity:.6; }
-  .card-corner.tl{ top:8px; left:8px; border-top:2px solid; border-left:2px solid; }
-  .card-corner.tr{ top:8px; right:8px; border-top:2px solid; border-right:2px solid; }
-  .card-corner.bl{ bottom:8px; left:8px; border-bottom:2px solid; border-left:2px solid; }
-  .card-corner.br{ bottom:8px; right:8px; border-bottom:2px solid; border-right:2px solid; }
 
   main{ max-width:960px; margin:0 auto; padding:130px 28px 100px; }
 
@@ -120,6 +109,7 @@
     text-align:center; font-size:18px; line-height:1.75; color:var(--text-dim);
     max-width:680px; margin:0 auto 36px;
   }
+  .project-description strong, .section-text strong{ color:var(--text); font-weight:700; }
   .project-description ul{
     text-align:left; display:inline-block; margin:10px auto 0; padding-left:22px;
   }
@@ -189,7 +179,7 @@
     font-family:var(--font-mono); font-size:12px; letter-spacing:0.04em; text-transform:uppercase;
   }
   .project-nav a:hover{ background:var(--panel-2); }
-  .project-nav .nav-prev{ border-right:1px solid var(--line); border-left:3px solid var(--cyan); justify-content:flex-start; }
+  .project-nav .nav-prev{ border-right:1px solid var(--line); border-left:3px solid var(--line-soft); justify-content:flex-start; }
   .project-nav .nav-next{ border-right:3px solid var(--red); justify-content:flex-end; text-align:right; }
   .project-nav .nav-arrow{ font-size:16px; opacity:.8; }
   .project-nav.single{ grid-template-columns:1fr; }
@@ -207,20 +197,21 @@
 <body>
 
   <div class="topbar">
-    <a href="portfolio.html#home" class="nav-brand">
-      <span class="logo-mark">
+    <a href="index.html#home" class="nav-brand">
+      <span class="logo-mark" id="brand-logo">
         <svg viewBox="0 0 24 24" fill="none">
-          <path d="M12 2L21 7V17L12 22L3 17V7L12 2Z" stroke="#4fd8ea" stroke-width="1.4"/>
-          <path d="M12 8L12 16M8 12L16 12" stroke="#ff5b4d" stroke-width="1.4"/>
+          <path d="M12 2L21 7V17L12 22L3 17V7L12 2Z" stroke="#c81e2b" stroke-width="1.4"/>
+          <path d="M12 8L12 16M8 12L16 12" stroke="#c81e2b" stroke-width="1.4"/>
         </svg>
       </span>
-      <span class="nav-name"><span class="dot"></span>Jace</span>
+      <span class="nav-name" id="brand-name">Jace</span>
     </a>
     <nav class="nav-links">
-      <a href="portfolio.html#home">Home</a>
-      <a href="portfolio.html#projects">Projects</a>
-      <a href="portfolio.html#about">About Me</a>
-      <a href="portfolio.html#contact">Contact</a>
+      <a href="index.html#home">Home</a>
+      <a href="index.html#projects">Projects</a>
+      <a href="index.html#about">About Me</a>
+      <a href="resume.html">Resumè</a>
+      <a href="index.html#contact">Contact</a>
     </nav>
   </div>
 
@@ -257,7 +248,7 @@
      - un singolo a capo dentro lo stesso paragrafo diventa <br> */
   function formatRichText(str){
     if (!str) return '';
-    const escaped = escapeHtml(str);
+    const escaped = escapeHtml(str).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
     const blocks = escaped.split(/\n\s*\n/);
     return blocks.map(block => {
       const lines = block.split('\n').map(l => l.trim()).filter(Boolean);
@@ -362,7 +353,7 @@
     main.innerHTML = `
       <div class="empty-state">
         <p>${escapeHtml(message)}</p>
-        <p style="margin-top:14px"><a href="portfolio.html#projects">← Torna ai progetti</a></p>
+        <p style="margin-top:14px"><a href="index.html#projects">← Torna ai progetti</a></p>
       </div>
     `;
   }
@@ -371,6 +362,18 @@
     const main = document.getElementById('main-content');
     const data = await loadData();
     const slug = getParam('slug');
+
+    /* ---------- BRAND (logo + nome) ----------
+       Applicato subito, indipendentemente dal progetto trovato o meno,
+       perché fa parte della topbar condivisa da tutto il sito. */
+    if (data && data.brand) {
+      const brandLogo = document.getElementById('brand-logo');
+      const brandName = document.getElementById('brand-name');
+      if (brandName && data.brand.name) brandName.textContent = data.brand.name;
+      if (brandLogo && data.brand.logoSrc) {
+        brandLogo.innerHTML = `<img src="${data.brand.logoSrc}" alt="${data.brand.name || 'Logo'}" style="width:100%;height:100%;object-fit:contain;">`;
+      }
+    }
 
     if (!data || !data.projects || !data.projects.length) {
       renderEmptyState(main, 'Contenuti non disponibili al momento.');
