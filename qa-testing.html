@@ -192,7 +192,7 @@
       <a href="index.html#home">Home</a>
       <a href="index.html#projects">Projects</a>
       <a href="index.html#about">About Me</a>
-      <a href="resume.html">Resumè</a>
+      <a href="resume.html">Resume</a>
       <a href="index.html#contact">Contact</a>
     </nav>
   </div>
@@ -253,16 +253,16 @@
       trailerLabel: "Trailer",
       downloadUrl: "",
       downloadLabel: "Download",
-      description: "Bug hunting e report strutturati durante la fase di Early Access, con focus su regressioni introdotte dai nuovi personaggi.",
+      description: "Bug hunting and structured reports during the Early Access phase, focused on regressions introduced by new characters.",
       facts: [
-        { label: "Tipo di test", value: "Regression + playtest" },
-        { label: "Piattaforme", value: "PC (Steam)" },
-        { label: "Il mio ruolo", value: "QA / Combat Designer" },
-        { label: "Durata", value: "Continuativo, ogni release" },
-        { label: "Dimensione Team", value: "4 persone" },
-        { label: "Nome Azienda/Team", value: "Villains Studio" }
+        { label: "Test type", value: "Regression + playtest" },
+        { label: "Platforms", value: "PC (Steam)" },
+        { label: "My role", value: "QA / Combat Designer" },
+        { label: "Duration", value: "Ongoing, every release" },
+        { label: "Team size", value: "4 people" },
+        { label: "Company/Team name", value: "Villains Studio" }
       ],
-      responsibilities: "- Report bug strutturati con repro-steps\n- Test di regressione ad ogni build\n- Validazione bilanciamento nuovi personaggi"
+      responsibilities: "- Structured bug reports with repro steps\n- Regression testing on every build\n- Balance validation for new characters"
     },
     {
       title: "Trident's Tale",
@@ -272,16 +272,16 @@
       trailerLabel: "Trailer",
       downloadUrl: "",
       downloadLabel: "Download",
-      description: "QA esterno su un progetto studentesco: playtest mirati e verifica della coerenza delle meccaniche core.",
+      description: "External QA on a student project: targeted playtesting and consistency checks on core mechanics.",
       facts: [
-        { label: "Tipo di test", value: "Playtest esterno" },
-        { label: "Piattaforme", value: "PC" },
-        { label: "Il mio ruolo", value: "QA Tester" },
-        { label: "Durata", value: "2 settimane" },
-        { label: "Dimensione Team", value: "Esterno" },
-        { label: "Nome Azienda/Team", value: "Progetto studentesco" }
+        { label: "Test type", value: "External playtest" },
+        { label: "Platforms", value: "PC" },
+        { label: "My role", value: "QA Tester" },
+        { label: "Duration", value: "2 weeks" },
+        { label: "Team size", value: "External" },
+        { label: "Company/Team name", value: "Student project" }
       ],
-      responsibilities: "- Playtest mirati sulle meccaniche core\n- Segnalazione bug e criticità di game feel\n- Feedback scritto al team di sviluppo"
+      responsibilities: "- Targeted playtesting of core mechanics\n- Reporting bugs and game-feel issues\n- Written feedback to the dev team"
     }
   ];
 
@@ -351,14 +351,40 @@
     main.innerHTML = `
       <div class="empty-state">
         <p>${escapeHtml(message)}</p>
-        <p style="margin-top:14px"><a href="index.html#projects">← Torna ai progetti</a></p>
+        <p style="margin-top:14px"><a href="index.html#projects">← Back to projects</a></p>
       </div>
     `;
+  }
+
+  function applyFonts(fonts){
+    if (!fonts) return;
+    const display = fonts.display || 'Space Grotesk';
+    const body = fonts.body || 'Inter';
+    const mono = fonts.mono || 'JetBrains Mono';
+    const families = [display, body, mono]
+      .filter((v, i, arr) => arr.indexOf(v) === i)
+      .map(f => `family=${encodeURIComponent(f).replace(/%20/g, '+')}:wght@400;500;600;700`)
+      .join('&');
+    const url = `https://fonts.googleapis.com/css2?${families}&display=swap`;
+    let link = document.getElementById('dynamic-fonts-link');
+    if (!link) {
+      link = document.createElement('link');
+      link.id = 'dynamic-fonts-link';
+      link.rel = 'stylesheet';
+      document.head.appendChild(link);
+    }
+    link.href = url;
+    const root = document.documentElement.style;
+    root.setProperty('--font-display', `'${display}', sans-serif`);
+    root.setProperty('--font-body', `'${body}', sans-serif`);
+    root.setProperty('--font-mono', `'${mono}', monospace`);
   }
 
   (async function init(){
     const main = document.getElementById('main-content');
     const data = await loadQaTesting();
+
+    applyFonts(data.fonts);
 
     /* ---------- BRAND (logo + nome) ---------- */
     if (data.brand) {
@@ -372,14 +398,14 @@
 
     const entries = data.qaTesting || [];
     if (!entries.length) {
-      renderEmptyState(main, 'Nessun report disponibile al momento.');
+      renderEmptyState(main, 'No reports available at the moment.');
       return;
     }
 
     const tocHtml = entries.length > 1 ? `
       <div class="toc-wrap">
         <div class="toc-heading">Table of Content</div>
-        <p class="toc-hint">Elenco numerato che cambia in base a quante sezioni si aggiungono a questa pagina: ogni voce corrisponde all'inizio della spiegazione di un progetto.</p>
+        <p class="toc-hint">Numbered list that grows as more entries are added to this page: each item links to the start of a project's write-up.</p>
         <ol class="toc-list">
           ${entries.map((e, i) => `<li><span>${String(i+1).padStart(2,'0')}</span><a href="#entry-${i}">${escapeHtml(e.title)}</a></li>`).join('')}
         </ol>
@@ -390,11 +416,11 @@
       const media = e.media && e.media.length ? e.media : [{ type: 'none' }];
       const slidesHtml = media.map((m, mi) => mediaSlideHtml(m, mi === 0, e.title)).join('');
       const dotsHtml = media.length > 1
-        ? `<div class="carousel-dots">${media.map((_, mi) => `<button class="carousel-dot${mi === 0 ? ' active' : ''}" type="button" aria-label="Vai all'immagine ${mi+1}"></button>`).join('')}</div>`
+        ? `<div class="carousel-dots">${media.map((_, mi) => `<button class="carousel-dot${mi === 0 ? ' active' : ''}" type="button" aria-label="Go to image ${mi+1}"></button>`).join('')}</div>`
         : '';
       const navHtml = media.length > 1 ? `
-        <button class="carousel-nav-btn prev" type="button" aria-label="Immagine precedente">‹</button>
-        <button class="carousel-nav-btn next" type="button" aria-label="Immagine successiva">›</button>
+        <button class="carousel-nav-btn prev" type="button" aria-label="Previous image">‹</button>
+        <button class="carousel-nav-btn next" type="button" aria-label="Next image">›</button>
       ` : '';
 
       const downloadUrl = e.downloadUrl || '';
@@ -411,7 +437,7 @@
 
       const responsibilitiesHtml = e.responsibilities ? `
         <div class="entry-responsibilities">
-          <span class="entry-responsibilities-label">Responsabilità e cose fatte</span>
+          <span class="entry-responsibilities-label">Responsibilities & what I did</span>
           ${formatRichText(e.responsibilities)}
         </div>
       ` : '';

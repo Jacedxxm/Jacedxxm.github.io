@@ -192,7 +192,7 @@
       <a href="index.html#home">Home</a>
       <a href="index.html#projects">Projects</a>
       <a href="index.html#about">About Me</a>
-      <a href="resume.html">Resumè</a>
+      <a href="resume.html">Resume</a>
       <a href="index.html#contact">Contact</a>
     </nav>
   </div>
@@ -254,16 +254,16 @@
       trailerLabel: "Trailer",
       downloadUrl: "",
       downloadLabel: "Download",
-      description: "Prototipo solo in UE5 ispirato a spy-thriller psicologici, esplorazione di meccaniche di infiltrazione e doppio gioco.",
+      description: "UE5-only prototype inspired by psychological spy-thrillers, exploring infiltration and double-agent mechanics.",
       facts: [
-        { label: "Genere del gioco", value: "Stealth prototype" },
-        { label: "Piattaforme", value: "PC" },
-        { label: "Il mio ruolo nel progetto", value: "Solo developer" },
-        { label: "Tempo di sviluppo", value: "3 settimane" },
-        { label: "Dimensione Team", value: "1 persona" },
-        { label: "Nome Azienda/Team", value: "Progetto personale" }
+        { label: "Genre", value: "Stealth prototype" },
+        { label: "Platforms", value: "PC" },
+        { label: "My role on the project", value: "Solo developer" },
+        { label: "Development time", value: "3 weeks" },
+        { label: "Team size", value: "1 person" },
+        { label: "Company/Team name", value: "Personal project" }
       ],
-      responsibilities: "- Level design del livello di prova\n- Sistema di stealth e detection\n- Blueprint per l'IA delle guardie"
+      responsibilities: "- Level design for the test level\n- Stealth and detection system\n- Blueprint for guard AI"
     },
     {
       title: "Golem Rumble — Game Jam Build",
@@ -274,16 +274,16 @@
       trailerLabel: "Trailer",
       downloadUrl: "",
       downloadLabel: "Download",
-      description: "La build originale nata durante Global Game Jam, poi evoluta nel gioco completo pubblicato su Steam.",
+      description: "The original build born during Global Game Jam, later evolved into the full game published on Steam.",
       facts: [
-        { label: "Genere del gioco", value: "1v1 Arena Brawler" },
-        { label: "Piattaforme", value: "PC" },
-        { label: "Il mio ruolo nel progetto", value: "Combat Designer" },
-        { label: "Tempo di sviluppo", value: "48 ore (jam)" },
-        { label: "Dimensione Team", value: "4 persone" },
-        { label: "Nome Azienda/Team", value: "Villains Studio" }
+        { label: "Genre", value: "1v1 Arena Brawler" },
+        { label: "Platforms", value: "PC" },
+        { label: "My role on the project", value: "Combat Designer" },
+        { label: "Development time", value: "48 hours (jam)" },
+        { label: "Team size", value: "4 people" },
+        { label: "Company/Team name", value: "Villains Studio" }
       ],
-      responsibilities: "- Prototipazione rapida del combat loop\n- Bilanciamento delle prime due masks giocabili\n- Playtest interni durante la jam"
+      responsibilities: "- Rapid prototyping of the combat loop\n- Balancing the first two playable masks\n- Internal playtesting during the jam"
     }
   ];
 
@@ -353,14 +353,40 @@
     main.innerHTML = `
       <div class="empty-state">
         <p>${escapeHtml(message)}</p>
-        <p style="margin-top:14px"><a href="index.html#projects">← Torna ai progetti</a></p>
+        <p style="margin-top:14px"><a href="index.html#projects">← Back to projects</a></p>
       </div>
     `;
+  }
+
+  function applyFonts(fonts){
+    if (!fonts) return;
+    const display = fonts.display || 'Space Grotesk';
+    const body = fonts.body || 'Inter';
+    const mono = fonts.mono || 'JetBrains Mono';
+    const families = [display, body, mono]
+      .filter((v, i, arr) => arr.indexOf(v) === i)
+      .map(f => `family=${encodeURIComponent(f).replace(/%20/g, '+')}:wght@400;500;600;700`)
+      .join('&');
+    const url = `https://fonts.googleapis.com/css2?${families}&display=swap`;
+    let link = document.getElementById('dynamic-fonts-link');
+    if (!link) {
+      link = document.createElement('link');
+      link.id = 'dynamic-fonts-link';
+      link.rel = 'stylesheet';
+      document.head.appendChild(link);
+    }
+    link.href = url;
+    const root = document.documentElement.style;
+    root.setProperty('--font-display', `'${display}', sans-serif`);
+    root.setProperty('--font-body', `'${body}', sans-serif`);
+    root.setProperty('--font-mono', `'${mono}', monospace`);
   }
 
   (async function init(){
     const main = document.getElementById('main-content');
     const data = await loadOtherProjects();
+
+    applyFonts(data.fonts);
 
     /* ---------- BRAND (logo + nome) ---------- */
     if (data.brand) {
@@ -374,14 +400,14 @@
 
     const entries = data.otherProjects || [];
     if (!entries.length) {
-      renderEmptyState(main, 'Nessun progetto disponibile al momento.');
+      renderEmptyState(main, 'No projects available at the moment.');
       return;
     }
 
     const tocHtml = entries.length > 1 ? `
       <div class="toc-wrap">
         <div class="toc-heading">Table of Content</div>
-        <p class="toc-hint">Elenco numerato che cambia in base a quante sezioni si aggiungono a questa pagina: ogni voce corrisponde all'inizio della spiegazione di un progetto.</p>
+        <p class="toc-hint">Numbered list that grows as more entries are added to this page: each item links to the start of a project's write-up.</p>
         <ol class="toc-list">
           ${entries.map((e, i) => `<li><span>${String(i+1).padStart(2,'0')}</span><a href="#entry-${i}">${escapeHtml(e.title)}</a></li>`).join('')}
         </ol>
@@ -392,11 +418,11 @@
       const media = e.media && e.media.length ? e.media : [{ type: 'none' }];
       const slidesHtml = media.map((m, mi) => mediaSlideHtml(m, mi === 0, e.title)).join('');
       const dotsHtml = media.length > 1
-        ? `<div class="carousel-dots">${media.map((_, mi) => `<button class="carousel-dot${mi === 0 ? ' active' : ''}" type="button" aria-label="Vai all'immagine ${mi+1}"></button>`).join('')}</div>`
+        ? `<div class="carousel-dots">${media.map((_, mi) => `<button class="carousel-dot${mi === 0 ? ' active' : ''}" type="button" aria-label="Go to image ${mi+1}"></button>`).join('')}</div>`
         : '';
       const navHtml = media.length > 1 ? `
-        <button class="carousel-nav-btn prev" type="button" aria-label="Immagine precedente">‹</button>
-        <button class="carousel-nav-btn next" type="button" aria-label="Immagine successiva">›</button>
+        <button class="carousel-nav-btn prev" type="button" aria-label="Previous image">‹</button>
+        <button class="carousel-nav-btn next" type="button" aria-label="Next image">›</button>
       ` : '';
 
       const downloadUrl = e.downloadUrl || '';
@@ -413,7 +439,7 @@
 
       const responsibilitiesHtml = e.responsibilities ? `
         <div class="entry-responsibilities">
-          <span class="entry-responsibilities-label">Responsabilità e cose fatte</span>
+          <span class="entry-responsibilities-label">Responsibilities & what I did</span>
           ${formatRichText(e.responsibilities)}
         </div>
       ` : '';

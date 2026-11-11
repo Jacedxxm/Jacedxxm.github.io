@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Resumè — Combat & Systems Design</title>
+<title>Resume — Combat & Systems Design</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -102,16 +102,16 @@
       <a href="index.html#home">Home</a>
       <a href="index.html#projects">Projects</a>
       <a href="index.html#about">About Me</a>
-      <a href="resume.html" class="active">Resumè</a>
+      <a href="resume.html" class="active">Resume</a>
       <a href="index.html#contact">Contact</a>
     </nav>
   </div>
 
   <div class="viewer-wrap">
-    <iframe id="pdf-frame" title="Resumè"></iframe>
+    <iframe id="pdf-frame" title="Resume"></iframe>
     <div class="viewer-fallback" id="pdf-fallback">
-      <p id="pdf-fallback-text">Non è stato possibile visualizzare il PDF direttamente nel browser. Puoi comunque scaricarlo o aprirlo in una nuova scheda.</p>
-      <a href="#" id="fallback-link" target="_blank" rel="noopener">Apri il PDF</a>
+      <p id="pdf-fallback-text">The PDF couldn't be displayed directly in the browser. You can still download it or open it in a new tab.</p>
+      <a href="#" id="fallback-link" target="_blank" rel="noopener">Open PDF</a>
     </div>
   </div>
 
@@ -155,11 +155,37 @@
     fallback.classList.add('show');
   }
 
+  function applyFonts(fonts){
+    if (!fonts) return;
+    const display = fonts.display || 'Space Grotesk';
+    const body = fonts.body || 'Inter';
+    const mono = fonts.mono || 'JetBrains Mono';
+    const families = [display, body, mono]
+      .filter((v, i, arr) => arr.indexOf(v) === i)
+      .map(f => `family=${encodeURIComponent(f).replace(/%20/g, '+')}:wght@400;500;600;700`)
+      .join('&');
+    const url = `https://fonts.googleapis.com/css2?${families}&display=swap`;
+    let link = document.getElementById('dynamic-fonts-link');
+    if (!link) {
+      link = document.createElement('link');
+      link.id = 'dynamic-fonts-link';
+      link.rel = 'stylesheet';
+      document.head.appendChild(link);
+    }
+    link.href = url;
+    const root = document.documentElement.style;
+    root.setProperty('--font-display', `'${display}', sans-serif`);
+    root.setProperty('--font-body', `'${body}', sans-serif`);
+    root.setProperty('--font-mono', `'${mono}', monospace`);
+  }
+
   (async function init(){
     const data = await loadSiteData();
     const src = (data && data.resume && data.resume.pdfSrc) || DEFAULT_RESUME_SRC;
     const frame = document.getElementById('pdf-frame');
     const fallbackLink = document.getElementById('fallback-link');
+
+    applyFonts(data && data.fonts);
 
     /* ---------- BRAND (logo + nome) ---------- */
     if (data && data.brand) {
@@ -175,7 +201,7 @@
 
     const exists = await fileExists(src);
     if (!exists) {
-      showFallback(`Il file "${src}" non è stato trovato. Controlla di averlo caricato nella cartella assets/ della repo con questo nome esatto (maiuscole/minuscole comprese).`);
+      showFallback(`The file "${src}" was not found. Make sure you've uploaded it to the repo's assets/ folder with this exact name (case-sensitive).`);
       return;
     }
 

@@ -210,7 +210,7 @@
       <a href="index.html#home">Home</a>
       <a href="index.html#projects">Projects</a>
       <a href="index.html#about">About Me</a>
-      <a href="resume.html">Resumè</a>
+      <a href="resume.html">Resume</a>
       <a href="index.html#contact">Contact</a>
     </nav>
   </div>
@@ -308,29 +308,29 @@
         trailerLabel: "Trailer",
         downloadUrl: "https://store.steampowered.com/",
         downloadLabel: "Download",
-        description: "Sparatutto arena hardcore in terza persona con un twist narrativo: il giocatore è il villain.",
+        description: "Hardcore third-person arena shooter with a narrative twist: the player is the villain.",
         facts: [
-          { label: "Genere del gioco", value: "Third-person shooter arena" },
-          { label: "Piattaforme", value: "PC (Steam)" },
-          { label: "Il mio ruolo nel progetto", value: "Combat & Systems Designer" },
-          { label: "Tempo di sviluppo", value: "In corso" },
-          { label: "Dimensione Team", value: "15 persone" },
-          { label: "Nome Azienda/Team", value: "Villains Studio" }
+          { label: "Genre", value: "Third-person shooter arena" },
+          { label: "Platforms", value: "PC (Steam)" },
+          { label: "My role on the project", value: "Combat & Systems Designer" },
+          { label: "Development time", value: "Ongoing" },
+          { label: "Team size", value: "15 people" },
+          { label: "Company/Team name", value: "Villains Studio" }
         ],
         sections: [
           {
             title: "Combat design",
-            text: "Sistemi di combattimento pensati per essere leggibili prima ancora che bilanciati.\n\n- Telegraphing chiaro sulle mosse nemiche\n- Feedback immediato su danno inflitto e subito\n- Iterazione rapida tramite overlay di debug",
+            text: "Combat systems designed to be readable before they're balanced.\n\n- Clear telegraphing on enemy moves\n- Immediate feedback on damage dealt and taken\n- Rapid iteration through debug overlays",
             media: { type: "none", youtubeId: "", videoSrc: "", imageSrc: "" }
           },
           {
             title: "Level design",
-            text: "Arene costruite attorno al ritmo del combattimento, con percorsi che incoraggiano decisioni tattiche rapide e momenti di respiro tra un'ondata e l'altra.",
+            text: "Arenas built around combat pacing, with paths that encourage quick tactical decisions and breathing room between waves.",
             media: { type: "none", youtubeId: "", videoSrc: "", imageSrc: "" }
           },
           {
-            title: "Tooling di debug",
-            text: "Overlay custom per visualizzare velocity e attack arc in tempo reale, usati per validare rapidamente il feeling del combattimento durante l'iterazione.",
+            title: "Debug tooling",
+            text: "Custom overlays to visualize velocity and attack arcs in real time, used to quickly validate combat feel during iteration.",
             media: { type: "none", youtubeId: "", videoSrc: "", imageSrc: "" }
           }
         ]
@@ -353,15 +353,41 @@
     main.innerHTML = `
       <div class="empty-state">
         <p>${escapeHtml(message)}</p>
-        <p style="margin-top:14px"><a href="index.html#projects">← Torna ai progetti</a></p>
+        <p style="margin-top:14px"><a href="index.html#projects">← Back to projects</a></p>
       </div>
     `;
+  }
+
+  function applyFonts(fonts){
+    if (!fonts) return;
+    const display = fonts.display || 'Space Grotesk';
+    const body = fonts.body || 'Inter';
+    const mono = fonts.mono || 'JetBrains Mono';
+    const families = [display, body, mono]
+      .filter((v, i, arr) => arr.indexOf(v) === i)
+      .map(f => `family=${encodeURIComponent(f).replace(/%20/g, '+')}:wght@400;500;600;700`)
+      .join('&');
+    const url = `https://fonts.googleapis.com/css2?${families}&display=swap`;
+    let link = document.getElementById('dynamic-fonts-link');
+    if (!link) {
+      link = document.createElement('link');
+      link.id = 'dynamic-fonts-link';
+      link.rel = 'stylesheet';
+      document.head.appendChild(link);
+    }
+    link.href = url;
+    const root = document.documentElement.style;
+    root.setProperty('--font-display', `'${display}', sans-serif`);
+    root.setProperty('--font-body', `'${body}', sans-serif`);
+    root.setProperty('--font-mono', `'${mono}', monospace`);
   }
 
   (async function init(){
     const main = document.getElementById('main-content');
     const data = await loadData();
     const slug = getParam('slug');
+
+    applyFonts(data && data.fonts);
 
     /* ---------- BRAND (logo + nome) ----------
        Applicato subito, indipendentemente dal progetto trovato o meno,
@@ -376,7 +402,7 @@
     }
 
     if (!data || !data.projects || !data.projects.length) {
-      renderEmptyState(main, 'Contenuti non disponibili al momento.');
+      renderEmptyState(main, 'Content not available at the moment.');
       return;
     }
 
@@ -389,7 +415,7 @@
     let index = order.indexOf(slug);
     if (index === -1 && !slug && order.length) index = 0; // nessuno slug -> primo progetto
     if (index === -1) {
-      renderEmptyState(main, 'Progetto non trovato.');
+      renderEmptyState(main, 'Project not found.');
       return;
     }
 
@@ -397,7 +423,7 @@
     const pageData = pages.find(pp => slugify(pp.title) === order[index]);
 
     if (!pageData) {
-      renderEmptyState(main, `La pagina di dettaglio per "${baseProject.title}" non è stata ancora creata.`);
+      renderEmptyState(main, `The detail page for "${baseProject.title}" hasn't been created yet.`);
       return;
     }
 
@@ -457,10 +483,10 @@
       navHtml = `
         <div class="project-nav">
           <a class="nav-prev" href="project.html?slug=${order[prevIndex]}">
-            <span class="nav-arrow">◀</span> Progetto precedente
+            <span class="nav-arrow">◀</span> Previous project
           </a>
           <a class="nav-next" href="project.html?slug=${order[nextIndex]}">
-            Progetto successivo <span class="nav-arrow">▶</span>
+            Next project <span class="nav-arrow">▶</span>
           </a>
         </div>
       `;

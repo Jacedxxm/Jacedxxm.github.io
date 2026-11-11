@@ -102,6 +102,12 @@
     padding:4px 6px;
   }
   .remove-btn:hover{ color:var(--red); }
+  .platform-checks{ display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:6px; }
+  .check-label{
+    display:inline-flex; align-items:center; gap:7px; margin:0;
+    text-transform:none; font-family:var(--font-body); font-size:13px; color:var(--text); cursor:pointer;
+  }
+  .check-label input{ width:auto; margin:0; cursor:pointer; }
   .tag-cat-row{
     display:flex; align-items:center; gap:12px; padding:10px 12px; margin-bottom:8px;
     border:1px solid var(--line); border-radius:6px; background:var(--bg);
@@ -123,55 +129,82 @@
 <body>
 
   <div class="top-actions">
-    <button class="btn" id="btn-load-existing">Carica data.json esistente</button>
+    <button class="btn" id="btn-load-existing">Load existing data.json</button>
     <input type="file" id="file-input-json" accept="application/json">
-    <button class="btn" id="btn-load-file">Carica file JSON dal computer</button>
-    <button class="btn btn--primary" id="btn-download">Scarica JSON</button>
+    <button class="btn" id="btn-load-file">Load JSON file from computer</button>
+    <button class="btn btn--primary" id="btn-download">Download JSON</button>
     <span class="status" id="load-status"></span>
   </div>
 
-  <h1>Admin — Contenuti del portfolio</h1>
+  <h1>Admin — Portfolio Content</h1>
   <p class="subtitle">
-    Modifica qui i contenuti del sito, poi clicca <strong>"Scarica JSON"</strong> per ottenere un file
-    <code>data.json</code> aggiornato. Carica quel file nella stessa cartella di <code>index.html</code>
-    sul tuo hosting (sovrascrivendo quello vecchio, se presente) e il sito si aggiorna automaticamente.
-    Nessun contenuto viene inviato online da questa pagina: tutto resta nel tuo browser finché non scarichi il file.
+    Edit the site's content here, then click <strong>"Download JSON"</strong> to get an updated
+    <code>data.json</code> file. Upload that file to the same folder as <code>index.html</code>
+    on your hosting (overwriting the old one, if present) and the site updates automatically.
+    No content is sent online from this page: everything stays in your browser until you download the file.
   </p>
+
+  <!-- TYPOGRAPHY -->
+  <section class="block">
+    <h2>Typography</h2>
+    <p class="block-hint">
+      Fonts used across the whole site, loaded live from Google Fonts. Pick from the curated list,
+      or choose "Custom…" and type the exact name of any Google Font.
+    </p>
+
+    <label>Headings font (titles, big display text)</label>
+    <select id="font-display-select"></select>
+    <input type="text" id="font-display-custom" placeholder="Exact Google Fonts name, e.g. Clash Grotesk" style="display:none; margin-top:8px;">
+
+    <label style="margin-top:16px">Body font (paragraphs, descriptions)</label>
+    <select id="font-body-select"></select>
+    <input type="text" id="font-body-custom" placeholder="Exact Google Fonts name, e.g. Source Sans 3" style="display:none; margin-top:8px;">
+
+    <label style="margin-top:16px">Mono font (labels, tags, nav, code-like accents)</label>
+    <select id="font-mono-select"></select>
+    <input type="text" id="font-mono-custom" placeholder="Exact Google Fonts name, e.g. Fira Code" style="display:none; margin-top:8px;">
+
+    <p class="block-hint" style="margin-top:14px">
+      Font names are case-sensitive and must match Google Fonts exactly (check
+      <a href="https://fonts.google.com" target="_blank" rel="noopener" style="color:var(--cyan)">fonts.google.com</a>).
+      If a font fails to load, the site falls back to the browser's default sans-serif/monospace.
+    </p>
+  </section>
 
   <!-- BRAND / LOGO -->
   <section class="block">
     <h2>Brand</h2>
-    <p class="block-hint">Il logo e il nome mostrati in alto a sinistra nella barra di navigazione, su tutte le pagine del sito.</p>
-    <label>Nome</label>
+    <p class="block-hint">The logo and name shown in the top-left of the nav bar, on every page of the site.</p>
+    <label>Name</label>
     <input type="text" id="brand-name-input">
     <label>Logo</label>
-    <div class="cover-preview" id="brand-logo-preview" style="height:70px;">Clicca per caricare un'immagine (lascia vuoto per usare l'icona di default)</div>
+    <div class="cover-preview" id="brand-logo-preview" style="height:70px;">Click to upload an image (leave empty to use the default icon)</div>
     <input type="file" id="brand-logo-file" accept="image/*" style="display:none">
-    <button class="btn btn--small btn--danger" id="brand-logo-remove" type="button" style="margin-top:12px">Rimuovi logo (torna all'icona di default)</button>
+    <button class="btn btn--small btn--danger" id="brand-logo-remove" type="button" style="margin-top:12px">Remove logo (revert to default icon)</button>
   </section>
 
   <!-- TAG CATEGORIES -->
   <section class="block" id="tag-categories-block">
     <h2>Tag Categories</h2>
     <p class="block-hint">
-      Le categorie usate per colorare i tag dei progetti e le card di Skills/Software.
-      Crea nuove categorie con il colore che preferisci: le tendine di Projects, Key Skills
-      e Software si aggiornano da sole.
+      The categories used to color project tags and the Skills/Software cards.
+      Create new categories with whatever color you like: the dropdowns in Projects, Key Skills,
+      and Software update themselves automatically.
     </p>
     <div id="tag-categories-list"></div>
     <div class="item-card" style="border-style:dashed;">
-      <span class="item-label">Nuova categoria</span>
+      <span class="item-label">New category</span>
       <div class="row" style="margin-top:10px; align-items:flex-end;">
         <div>
-          <label>Nome</label>
-          <input type="text" id="new-tag-label" placeholder="es. Narrative Design">
+          <label>Name</label>
+          <input type="text" id="new-tag-label" placeholder="e.g. Narrative Design">
         </div>
         <div style="flex:0 0 90px;">
-          <label>Colore</label>
+          <label>Color</label>
           <input type="color" id="new-tag-color" value="#4fd8ea" style="height:40px; padding:2px; cursor:pointer;">
         </div>
       </div>
-      <button class="add-btn" id="add-tag-category" type="button" style="margin-top:12px;">+ Crea categoria</button>
+      <button class="add-btn" id="add-tag-category" type="button" style="margin-top:12px;">+ Create category</button>
     </div>
   </section>
 
@@ -179,118 +212,118 @@
   <section class="block">
     <h2>Parallax Background</h2>
     <p class="block-hint">
-      Immagine di sfondo che scorre più lentamente del contenuto mentre si naviga il sito (dietro
-      griglia HUD e bagliori). Dato che carichi tu i file nella repo GitHub, questa pagina registra
-      solo il <strong>percorso</strong> dell'immagine: dopo aver scaricato il JSON, carica anche il
-      file vero nella cartella <code>assets/</code> del repo, con lo stesso nome.
+      Background image that scrolls slower than the content as you browse the site (behind
+      the HUD grid and glow). Since you upload files to the GitHub repo yourself, this page only records
+      the image's <strong>path</strong>: after downloading the JSON, also upload the actual
+      file to the repo's <code>assets/</code> folder, with the same name.
     </p>
-    <label>Immagine di sfondo</label>
-    <div class="cover-preview" id="parallax-image-preview" style="height:110px;">Clicca per scegliere un'immagine</div>
+    <label>Background image</label>
+    <div class="cover-preview" id="parallax-image-preview" style="height:110px;">Click to choose an image</div>
     <input type="file" id="parallax-image-file" accept="image/*" style="display:none">
     <div class="row" style="margin-top:14px">
       <div>
-        <label>Opacità (0 = invisibile, 1 = piena)</label>
-        <input type="text" id="parallax-opacity" placeholder="es. 0.35">
+        <label>Opacity (0 = invisible, 1 = fully visible)</label>
+        <input type="text" id="parallax-opacity" placeholder="e.g. 0.35">
       </div>
       <div>
-        <label>Velocità parallax (0 = fissa, 1 = segue lo scroll)</label>
-        <input type="text" id="parallax-speed" placeholder="es. 0.1">
+        <label>Parallax speed (0 = fixed, 1 = follows scroll)</label>
+        <input type="text" id="parallax-speed" placeholder="e.g. 0.1">
       </div>
     </div>
-    <button class="btn btn--small btn--danger" id="parallax-remove" type="button" style="margin-top:14px">Rimuovi immagine di sfondo</button>
+    <button class="btn btn--small btn--danger" id="parallax-remove" type="button" style="margin-top:14px">Remove background image</button>
   </section>
 
   <!-- RESUME PDF -->
   <section class="block">
-    <h2>Resumè (PDF)</h2>
+    <h2>Resume (PDF)</h2>
     <p class="block-hint">
-      Il PDF mostrato nella pagina <code>resume.html</code>, collegata al link "Resumè" in alto.
-      Come per video e parallax, questa pagina registra solo il <strong>percorso</strong> del file:
-      dopo aver scaricato il JSON, carica anche il PDF vero nella cartella <code>assets/</code> della repo,
-      con lo stesso nome.
+      The PDF shown on the <code>resume.html</code> page, linked from the "Resume" link at the top.
+      As with video and parallax, this page only records the file's <strong>path</strong>:
+      after downloading the JSON, also upload the actual PDF to the repo's <code>assets/</code> folder,
+      with the same name.
     </p>
-    <label>File PDF</label>
-    <div class="cover-preview" id="resume-pdf-preview" style="height:70px;">Clicca per scegliere un file PDF</div>
+    <label>PDF file</label>
+    <div class="cover-preview" id="resume-pdf-preview" style="height:70px;">Click to choose a PDF file</div>
     <input type="file" id="resume-pdf-file" accept="application/pdf" style="display:none">
   </section>
 
   <!-- HERO -->
   <section class="block">
     <h2>Hero</h2>
-    <p class="block-hint">Il testo grande in home e il video di sfondo.</p>
+    <p class="block-hint">The large text on the home page and the background video.</p>
     <div class="row">
       <div>
-        <label>Parola ciano</label>
+        <label>Cyan word</label>
         <input type="text" id="hero-wordCyan">
       </div>
       <div>
-        <label>Parola rossa</label>
+        <label>Red word</label>
         <input type="text" id="hero-wordRed">
       </div>
     </div>
-    <label>Sottotitolo</label>
+    <label>Subtitle</label>
     <input type="text" id="hero-subtitle">
-    <label>Testo HUD (in basso a sinistra)</label>
+    <label>HUD text (bottom left)</label>
     <input type="text" id="hero-readout">
 
-    <label style="margin-top:20px">Sfondo hero</label>
+    <label style="margin-top:20px">Hero background</label>
     <select id="hero-bgType">
-      <option value="youtube">Video YouTube (link esterno)</option>
-      <option value="video">File video caricato da te (locale, consigliato — nessun collegamento esterno)</option>
-      <option value="image">Immagine caricata da te (locale)</option>
-      <option value="none">Nessuno sfondo (solo pattern HUD)</option>
+      <option value="youtube">YouTube video (external link)</option>
+      <option value="video">Video file you upload (local, recommended — no external link)</option>
+      <option value="image">Image you upload (local)</option>
+      <option value="none">No background (HUD pattern only)</option>
     </select>
 
     <div id="hero-bg-youtube-fields">
-      <label>ID video YouTube</label>
-      <input type="text" id="hero-youtubeId" placeholder="es. VrhL2W6CBlg (dalla URL youtube.com/watch?v=...)">
+      <label>YouTube video ID</label>
+      <input type="text" id="hero-youtubeId" placeholder="e.g. VrhL2W6CBlg (from the URL youtube.com/watch?v=...)">
       <p class="block-hint" style="margin:6px 0 0">
-        Dipende da YouTube: può non partire in autoplay su alcuni browser/dispositivi, mostra comunque
-        il logo YouTube, e richiede una connessione per caricarsi. Per uno sfondo più leggero e affidabile
-        usa "File video caricato da te" qui sopra.
+        Depends on YouTube: may not autoplay on some browsers/devices, always shows the
+        YouTube logo, and needs a connection to load. For a lighter, more reliable background
+        use "Video file you upload" above.
       </p>
     </div>
 
     <div id="hero-bg-video-fields" style="display:none">
-      <label>File video (mp4, consigliato H.264, sotto i 10–15MB per non appesantire il sito)</label>
-      <div class="cover-preview" id="hero-video-preview" style="height:70px;">Clicca per scegliere un file video</div>
+      <label>Video file (mp4, H.264 recommended, under 10–15MB to keep the site light)</label>
+      <div class="cover-preview" id="hero-video-preview" style="height:70px;">Click to choose a video file</div>
       <input type="file" id="hero-video-file" accept="video/*">
       <p class="block-hint" style="margin:6px 0 0">
-        Il video <strong>non</strong> viene incluso nel file JSON (per non appesantirlo): questa pagina si limita
-        a impostare il nome del file. Dopo aver scaricato <code>data.json</code>, carica anche il file video
-        <strong>con lo stesso nome</strong> nella cartella <code>assets/</code>, accanto a <code>index.html</code>.
+        The video is <strong>not</strong> included in the JSON file (to keep it light): this page just
+        sets the file name. After downloading <code>data.json</code>, also upload the video file
+        <strong>with the same name</strong> to the <code>assets/</code> folder, next to <code>index.html</code>.
       </p>
     </div>
 
     <div id="hero-bg-image-fields" style="display:none">
-      <label>Immagine di sfondo</label>
-      <div class="cover-preview" id="hero-image-preview" style="height:120px;">Clicca per caricare un'immagine</div>
+      <label>Background image</label>
+      <div class="cover-preview" id="hero-image-preview" style="height:120px;">Click to upload an image</div>
       <input type="file" id="hero-image-file" accept="image/*">
-      <p class="block-hint" style="margin:6px 0 0">Questa viene incorporata direttamente nel JSON, non serve caricare nulla a parte.</p>
+      <p class="block-hint" style="margin:6px 0 0">This is embedded directly in the JSON, no extra upload needed.</p>
     </div>
   </section>
 
   <!-- PROJECTS -->
   <section class="block">
     <h2>Projects</h2>
-    <p class="block-hint">Il primo progetto della lista è sempre quello "Featured" (più grande). Riordina con le frecce ↑↓. Spunta "Ha una pagina di dettaglio" per creare la pagina cliccabile del singolo progetto (trailer, descrizione, fatti rapidi, sezioni).</p>
+    <p class="block-hint">The first project in the list is always the "Featured" one (larger). Reorder with the ↑↓ arrows. Check "Has a detail page" to create the clickable page for that project (trailer, description, quick facts, sections).</p>
     <div id="projects-list"></div>
-    <button class="add-btn" id="add-project">+ Aggiungi progetto</button>
+    <button class="add-btn" id="add-project">+ Add project</button>
   </section>
 
   <!-- MORE LINKS -->
   <section class="block">
     <h2>Other Projects / QA Testing</h2>
-    <p class="block-hint">I due riquadri sotto la griglia progetti.</p>
-    <label>Other Projects — etichetta</label>
+    <p class="block-hint">The two boxes below the project grid.</p>
+    <label>Other Projects — label</label>
     <input type="text" id="more-other-label">
-    <label>Other Projects — sottotitolo</label>
+    <label>Other Projects — subtitle</label>
     <input type="text" id="more-other-sub">
     <label>Other Projects — link</label>
     <input type="text" id="more-other-href">
-    <label>QA Testing — etichetta</label>
+    <label>QA Testing — label</label>
     <input type="text" id="more-qa-label">
-    <label>QA Testing — sottotitolo</label>
+    <label>QA Testing — subtitle</label>
     <input type="text" id="more-qa-sub">
     <label>QA Testing — link</label>
     <input type="text" id="more-qa-href">
@@ -299,87 +332,87 @@
   <!-- ARTICLES -->
   <section class="block">
     <h2>Articles</h2>
-    <p class="block-hint">Il carosello sotto Other Projects / QA Testing. Con un solo articolo le frecce si nascondono da sole.</p>
+    <p class="block-hint">The carousel below Other Projects / QA Testing. With a single article the arrows hide themselves automatically.</p>
     <div id="articles-list"></div>
-    <button class="add-btn" id="add-article">+ Aggiungi articolo</button>
+    <button class="add-btn" id="add-article">+ Add article</button>
   </section>
 
   <!-- ABOUT -->
   <section class="block">
     <h2>About Me</h2>
-    <label>Titolo</label>
+    <label>Title</label>
     <input type="text" id="about-title">
-    <label>Testo</label>
+    <label>Text</label>
     <textarea id="about-text"></textarea>
-    <label>Status (sotto la foto)</label>
+    <label>Status (below the photo)</label>
     <input type="text" id="about-status">
-    <label>Foto profilo (opzionale)</label>
-    <div class="cover-preview" id="about-photo-preview" data-target="about-photo-file">Clicca per caricare una foto</div>
+    <label>Profile photo (optional)</label>
+    <div class="cover-preview" id="about-photo-preview" data-target="about-photo-file">Click to upload a photo</div>
     <input type="file" id="about-photo-file" accept="image/*">
-    <label style="margin-top:20px">Fatti rapidi</label>
+    <label style="margin-top:20px">Quick facts</label>
     <div id="about-facts-list"></div>
-    <button class="add-btn" id="add-fact">+ Aggiungi fatto</button>
+    <button class="add-btn" id="add-fact">+ Add fact</button>
   </section>
 
   <!-- Q&A -->
   <section class="block">
     <h2>Q&amp;A</h2>
     <div id="qa-list-admin"></div>
-    <button class="add-btn" id="add-qa">+ Aggiungi domanda</button>
+    <button class="add-btn" id="add-qa">+ Add question</button>
   </section>
 
   <!-- SKILLS -->
   <section class="block">
     <h2>Key Skills</h2>
     <div id="skills-list"></div>
-    <button class="add-btn" id="add-skill">+ Aggiungi skill</button>
+    <button class="add-btn" id="add-skill">+ Add skill</button>
   </section>
 
   <!-- SOFTWARE -->
   <section class="block">
     <h2>Software</h2>
     <div id="software-list"></div>
-    <button class="add-btn" id="add-software">+ Aggiungi software</button>
+    <button class="add-btn" id="add-software">+ Add software</button>
   </section>
 
   <!-- OTHER PROJECTS -->
   <section class="block">
     <h2>Other Projects</h2>
     <p class="block-hint">
-      La pagina sintetica <code>other-projects.html</code>, collegata al riquadro "Other Projects" della home.
-      Ogni progetto qui sotto ha un carosello di immagini/video che scorre in automatico ma è anche navigabile a mano.
+      The synthetic <code>other-projects.html</code> page, linked from the "Other Projects" box on the home page.
+      Each project below has an image/video carousel that auto-plays but can also be navigated manually.
     </p>
     <div id="other-projects-list"></div>
-    <button class="add-btn" id="add-other-project">+ Aggiungi progetto</button>
+    <button class="add-btn" id="add-other-project">+ Add project</button>
   </section>
 
   <!-- QA TESTING -->
   <section class="block">
     <h2>QA Testing</h2>
     <p class="block-hint">
-      La pagina sintetica <code>qa-testing.html</code>, collegata al riquadro "QA Testing" della home.
-      Stessa identica struttura di Other Projects: un carosello di immagini/video per ogni sessione di test/playtest.
+      The synthetic <code>qa-testing.html</code> page, linked from the "QA Testing" box on the home page.
+      Same exact structure as Other Projects: an image/video carousel for each test/playtest session.
     </p>
     <div id="qa-testing-list"></div>
-    <button class="add-btn" id="add-qa-testing">+ Aggiungi sessione</button>
+    <button class="add-btn" id="add-qa-testing">+ Add session</button>
   </section>
 
   <!-- CONTACT -->
   <section class="block">
     <h2>Contact</h2>
-    <label>Titolo</label>
+    <label>Title</label>
     <input type="text" id="contact-title">
-    <label>Testo</label>
+    <label>Text</label>
     <textarea id="contact-text"></textarea>
     <label>Email</label>
     <input type="email" id="contact-email">
-    <label>Testo del bottone</label>
+    <label>Button text</label>
     <input type="text" id="contact-buttonLabel">
   </section>
 
   <p class="footer-note">
-    Suggerimento: apri questa pagina dalla stessa cartella dove tieni <code>index.html</code> e <code>data.json</code> —
-    così "Carica data.json esistente" trova il file automaticamente. Se la apri altrove, usa "Carica file JSON dal computer".
+    Tip: open this page from the same folder where you keep <code>index.html</code> and <code>data.json</code> —
+    that way "Load existing data.json" finds the file automatically. If you open it elsewhere, use "Load JSON file from computer".
   </p>
 
 <script>
@@ -394,10 +427,11 @@
   }
 
   const DEFAULT_DATA = {
+    fonts: { display: "Space Grotesk", body: "Inter", mono: "JetBrains Mono" },
     brand: { name: "Jace", logoSrc: "" },
     hero: {
       wordCyan: "Gameplay", wordRed: "Designer",
-      subtitle: "Unreal Engine 5 · generazione procedurale · iterazione guidata dai dati.",
+      subtitle: "Unreal Engine 5 · procedural generation · data-driven iteration.",
       readout: "SYSTEM ONLINE // 4 PROJECTS LOADED",
       bgType: "youtube", youtubeId: "VrhL2W6CBlg", videoSrc: "", imageSrc: ""
     },
@@ -412,32 +446,32 @@
         tags: [{label:"Blueprint",cat:"programming"},{label:"VFX Debug",cat:"vfx"},{label:"Velocity/Attack Arc",cat:"vfx"}], cover: "" }
     ],
     moreLinks: {
-      other: { label: "Other Projects", sub: "Prototipi, game jam, lavori minori", href: "other-projects.html" },
-      qa: { label: "QA Testing", sub: "Bug hunting, playtest, report", href: "qa-testing.html" }
+      other: { label: "Other Projects", sub: "Prototypes, game jams, minor work", href: "other-projects.html" },
+      qa: { label: "QA Testing", sub: "Bug hunting, playtesting, reports", href: "qa-testing.html" }
     },
     articles: [
-      { title: "Player-Centric Pacing: un framework per il level design",
-        excerpt: "Come UX, cognitive load e flow state si intrecciano nel pacing dei livelli — caso di studio su Half-Life 2.",
+      { title: "Player-Centric Pacing: a framework for level design",
+        excerpt: "How UX, cognitive load, and flow state intertwine in level pacing — a case study on Half-Life 2.",
         tag: "Medium",
         url: "https://medium.com/@jacedxxm7/user-experience-in-game-design-player-centric-pacing-framework-2ad901e8a970" }
     ],
     about: {
       title: "Combat & systems designer, Warsaw.",
-      text: "Progetto sistemi e combattimento per un action roguelike in terza persona...",
+      text: "I design systems and combat for a third-person action roguelike...",
       status: "STATUS: AVAILABLE FOR PROJECTS",
       photo: "",
       facts: [
         { label: "Location", value: "Warsaw, PL" },
-        { label: "Ruolo", value: "Combat & Systems Designer" },
+        { label: "Role", value: "Combat & Systems Designer" },
         { label: "Engine", value: "Unreal Engine 5 (Blueprint)" },
-        { label: "Lingue", value: "Italiano / English" }
+        { label: "Languages", value: "Italian / English" }
       ]
     },
     qa: [
-      { q: "Che tipo di designer sei?", a: "Combat e systems designer..." },
-      { q: "Che engine e strumenti usi?", a: "Unreal Engine 5, quasi interamente in Blueprint..." },
-      { q: "Qual è la tua filosofia di design?", a: "\"Se il player muore e non sa perché, è un bug di design.\"" },
-      { q: "Sei disponibile per collaborazioni?", a: "Sì, per ruoli o progetti di combat/systems design..." }
+      { q: "What kind of designer are you?", a: "Combat and systems designer..." },
+      { q: "What engine and tools do you use?", a: "Unreal Engine 5, almost entirely in Blueprint..." },
+      { q: "What's your design philosophy?", a: "\"If the player dies and doesn't know why, that's a design bug.\"" },
+      { q: "Are you available for collaborations?", a: "Yes, for combat/systems design roles or projects..." }
     ],
     skills: [
       { name: "Combat Design", cat: "design" }, { name: "Systems Design", cat: "design" },
@@ -450,9 +484,9 @@
       { name: "Obsidian", cat: "tools" }, { name: "Steamworks", cat: "tools" }
     ],
     contact: {
-      title: "Parliamo di un progetto.",
-      text: "Per collaborazioni, ruoli aperti o semplicemente per fare due chiacchiere su combat e systems design.",
-      email: "tuamail@esempio.com", buttonLabel: "Scrivimi una mail"
+      title: "Let's talk about a project.",
+      text: "For collaborations, open roles, or just to chat about combat and systems design.",
+      email: "tuamail@esempio.com", buttonLabel: "Email me"
     },
     projectPages: [],
     tagCategories: [
@@ -526,8 +560,8 @@
 
     const videoPreview = document.getElementById('hero-video-preview');
     videoPreview.textContent = state.hero.videoSrc
-      ? `File impostato: ${state.hero.videoSrc} — clicca per cambiarlo`
-      : 'Clicca per scegliere un file video';
+      ? `File set: ${state.hero.videoSrc} — click to change it`
+      : 'Click to choose a video file';
 
     const imagePreview = document.getElementById('hero-image-preview');
     if (state.hero.imageSrc) {
@@ -535,7 +569,7 @@
       imagePreview.textContent = '';
     } else {
       imagePreview.style.backgroundImage = '';
-      imagePreview.textContent = "Clicca per caricare un'immagine";
+      imagePreview.textContent = "Click to upload an image";
     }
   }
 
@@ -556,7 +590,7 @@
          vero e proprio nella cartella assets/ del proprio hosting. */
       state.hero.videoSrc = 'assets/' + file.name;
       syncHeroBackgroundUI();
-      setStatus(`Percorso video impostato: assets/${file.name} — ricordati di caricare anche il file vero nella cartella assets/.`, 'ok');
+      setStatus(`Video path set: assets/${file.name} — remember to also upload the actual file to the assets/ folder.`, 'ok');
     });
 
     document.getElementById('hero-image-preview').addEventListener('click', () => {
@@ -565,13 +599,13 @@
     document.getElementById('hero-image-file').addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
-      setStatus('Comprimo immagine…');
+      setStatus('Compressing image…');
       try {
         const dataUrl = await fileToCompressedDataURL(file, 1920, 0.82);
         state.hero.imageSrc = dataUrl;
         syncHeroBackgroundUI();
-        setStatus('Immagine di sfondo caricata.', 'ok');
-      } catch (err) { setStatus('Errore caricando l\'immagine.', 'err'); }
+        setStatus('Background image uploaded.', 'ok');
+      } catch (err) { setStatus('Error uploading image.', 'err'); }
     });
   }
 
@@ -579,9 +613,9 @@
   function syncParallaxUI(){
     const preview = document.getElementById('parallax-image-preview');
     if (state.parallax.imageSrc) {
-      preview.textContent = `File impostato: ${state.parallax.imageSrc} — clicca per cambiarlo`;
+      preview.textContent = `File set: ${state.parallax.imageSrc} — click to change it`;
     } else {
-      preview.textContent = "Clicca per scegliere un'immagine";
+      preview.textContent = "Click to choose an image";
     }
     document.getElementById('parallax-opacity').value = state.parallax.opacity != null ? state.parallax.opacity : 0.35;
     document.getElementById('parallax-speed').value = state.parallax.speed != null ? state.parallax.speed : 0.1;
@@ -598,7 +632,7 @@
          Il file vero va caricato a mano nella cartella assets/ della repo. */
       state.parallax.imageSrc = 'assets/' + file.name;
       syncParallaxUI();
-      setStatus(`Percorso immagine impostato: assets/${file.name} — ricordati di caricare anche il file vero nella cartella assets/ della repo.`, 'ok');
+      setStatus(`Image path set: assets/${file.name} — remember to also upload the actual file to the repo's assets/ folder.`, 'ok');
     });
     document.getElementById('parallax-opacity').addEventListener('input', (e) => {
       const v = parseFloat(e.target.value);
@@ -611,11 +645,76 @@
     document.getElementById('parallax-remove').addEventListener('click', () => {
       state.parallax.imageSrc = '';
       syncParallaxUI();
-      setStatus('Immagine di sfondo parallax rimossa.', 'ok');
+      setStatus('Parallax background image removed.', 'ok');
     });
   }
 
   /* ---------- BRAND (logo + nome) ---------- */
+  /* ---------- TYPOGRAPHY ---------- */
+  const PLATFORM_OPTIONS = [
+    { key: "steam", name: "Steam" },
+    { key: "itch", name: "Itch.io" },
+    { key: "gog", name: "GOG" },
+    { key: "epic", name: "Epic Games Store" },
+    { key: "playstation", name: "PlayStation" },
+    { key: "xbox", name: "Xbox" },
+    { key: "switch", name: "Nintendo Switch" },
+    { key: "appstore", name: "App Store" },
+    { key: "googleplay", name: "Google Play" },
+    { key: "quest", name: "Meta Quest" },
+    { key: "gamejolt", name: "Game Jolt" },
+    { key: "humble", name: "Humble Bundle" }
+  ];
+
+  const FONT_OPTIONS = {
+    display: ["Space Grotesk", "Sora", "Syne", "Archivo", "Unbounded", "Oswald", "Anton", "Poppins", "Outfit", "Manrope"],
+    body: ["Inter", "Manrope", "Work Sans", "Source Sans 3", "IBM Plex Sans", "Karla", "Public Sans", "Rubik"],
+    mono: ["JetBrains Mono", "Space Mono", "IBM Plex Mono", "Roboto Mono", "Fira Code", "Source Code Pro"]
+  };
+
+  function buildFontSelect(selectId, customInputId, category){
+    const select = document.getElementById(selectId);
+    select.innerHTML = '';
+    FONT_OPTIONS[category].forEach(name => {
+      const opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = name;
+      select.appendChild(opt);
+    });
+    const customOpt = document.createElement('option');
+    customOpt.value = '__custom__';
+    customOpt.textContent = 'Custom…';
+    select.appendChild(customOpt);
+
+    const current = state.fonts[category] || FONT_OPTIONS[category][0];
+    const isPreset = FONT_OPTIONS[category].includes(current);
+    select.value = isPreset ? current : '__custom__';
+
+    const customInput = document.getElementById(customInputId);
+    customInput.style.display = isPreset ? 'none' : '';
+    customInput.value = isPreset ? '' : current;
+
+    select.onchange = () => {
+      if (select.value === '__custom__') {
+        customInput.style.display = '';
+        customInput.focus();
+        state.fonts[category] = customInput.value || current;
+      } else {
+        customInput.style.display = 'none';
+        state.fonts[category] = select.value;
+      }
+    };
+    customInput.oninput = () => {
+      state.fonts[category] = customInput.value;
+    };
+  }
+
+  function syncTypographyUI(){
+    buildFontSelect('font-display-select', 'font-display-custom', 'display');
+    buildFontSelect('font-body-select', 'font-body-custom', 'body');
+    buildFontSelect('font-mono-select', 'font-mono-custom', 'mono');
+  }
+
   function syncBrandUI(){
     document.getElementById('brand-name-input').value = state.brand.name || '';
     const preview = document.getElementById('brand-logo-preview');
@@ -627,7 +726,7 @@
       preview.textContent = '';
     } else {
       preview.style.backgroundImage = '';
-      preview.textContent = "Clicca per caricare un'immagine (lascia vuoto per usare l'icona di default)";
+      preview.textContent = "Click to upload an image (leave empty to use the default icon)";
     }
   }
 
@@ -641,26 +740,26 @@
     document.getElementById('brand-logo-file').addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
-      setStatus('Comprimo immagine…');
+      setStatus('Compressing image…');
       try {
         state.brand.logoSrc = await fileToCompressedDataURL(file, 200, 0.9);
         syncBrandUI();
-        setStatus('Logo caricato.', 'ok');
-      } catch (err) { setStatus('Errore caricando il logo.', 'err'); }
+        setStatus('Logo uploaded.', 'ok');
+      } catch (err) { setStatus('Error uploading logo.', 'err'); }
     });
     document.getElementById('brand-logo-remove').addEventListener('click', () => {
       state.brand.logoSrc = '';
       syncBrandUI();
-      setStatus('Logo rimosso, tornerà l\'icona di default.', 'ok');
+      setStatus('Logo removed, the default icon will be used.', 'ok');
     });
   }
 
-  /* ---------- RESUMÈ PDF ---------- */
+  /* ---------- RESUME PDF ---------- */
   function syncResumeUI(){
     const preview = document.getElementById('resume-pdf-preview');
     preview.textContent = state.resume.pdfSrc
-      ? `File impostato: ${state.resume.pdfSrc} — clicca per cambiarlo`
-      : 'Clicca per scegliere un file PDF';
+      ? `File set: ${state.resume.pdfSrc} — click to change it`
+      : 'Click to choose a PDF file';
   }
 
   function setupResumeListeners(){
@@ -672,7 +771,7 @@
       if (!file) return;
       state.resume.pdfSrc = 'assets/' + file.name;
       syncResumeUI();
-      setStatus(`Percorso PDF impostato: assets/${file.name} — ricordati di caricare anche il file vero nella cartella assets/ della repo.`, 'ok');
+      setStatus(`PDF path set: assets/${file.name} — remember to also upload the actual file to the repo's assets/ folder.`, 'ok');
     });
   }
 
@@ -686,6 +785,7 @@
     syncParallaxUI();
     syncResumeUI();
     syncBrandUI();
+    syncTypographyUI();
 
     bindText('more-other-label', 'moreLinks.other.label');
     bindText('more-other-sub', 'moreLinks.other.sub');
@@ -713,25 +813,27 @@
       card.className = 'item-card';
       card.innerHTML = `
         <div class="item-top">
-          <span class="item-label">${i === 0 ? 'FEATURED — ' : ''}Progetto ${i+1}</span>
+          <span class="item-label">${i === 0 ? 'FEATURED — ' : ''}Project ${i+1}</span>
           <div>
             <button class="remove-btn" data-up>↑</button>
             <button class="remove-btn" data-down>↓</button>
             <button class="remove-btn" data-remove>✕</button>
           </div>
         </div>
-        <label>Titolo</label>
+        <label>Title</label>
         <input type="text" data-field="title" value="${escapeAttr(p.title)}">
-        <label>Ruolo</label>
+        <label>Role</label>
         <input type="text" data-field="role" value="${escapeAttr(p.role)}">
         <label>Tag</label>
         <div data-tags></div>
-        <button class="add-btn" data-add-tag type="button">+ Aggiungi tag</button>
+        <button class="add-btn" data-add-tag type="button">+ Add tag</button>
         <label>Cover</label>
-        <div class="cover-preview" data-cover-preview style="${p.cover ? `background-image:url('${p.cover}')` : ''}">${p.cover ? '' : 'Clicca per caricare un\'immagine'}</div>
+        <div class="cover-preview" data-cover-preview style="${p.cover ? `background-image:url('${p.cover}')` : ''}">${p.cover ? '' : 'Click to upload an image'}</div>
         <input type="file" accept="image/*" data-cover-file style="display:none">
+        <label style="margin-top:20px">Platforms (tick to show the logo on the card)</label>
+        <div class="platform-checks" data-platforms></div>
         <label style="margin-top:20px; display:flex; align-items:center; gap:8px; cursor:pointer;">
-          <input type="checkbox" data-has-page style="width:auto;"> Ha una pagina di dettaglio (cliccabile dalla card)
+          <input type="checkbox" data-has-page style="width:auto;"> Has a detail page (clickable from the card)
         </label>
         <div data-page-editor></div>
       `;
@@ -755,7 +857,7 @@
           const row = document.createElement('div');
           row.className = 'tag-item';
           row.innerHTML = `
-            <div><input type="text" value="${escapeAttr(t.label)}" placeholder="Etichetta tag"></div>
+            <div><input type="text" value="${escapeAttr(t.label)}" placeholder="Tag label"></div>
             <div>
               <select>${getCategoryOptions(t.cat)}</select>
             </div>
@@ -771,24 +873,42 @@
         });
       }
       renderTags();
-      card.querySelector('[data-add-tag]').addEventListener('click', () => { p.tags.push({label:'Nuovo tag', cat:'design'}); renderTags(); });
+      card.querySelector('[data-add-tag]').addEventListener('click', () => { p.tags.push({label:'New tag', cat:'design'}); renderTags(); });
 
       const coverPreview = card.querySelector('[data-cover-preview]');
       const coverFile = card.querySelector('[data-cover-file]');
       coverPreview.addEventListener('click', () => coverFile.click());
       coverFile.addEventListener('change', async () => {
         if (!coverFile.files[0]) return;
-        setStatus('Comprimo immagine…');
+        setStatus('Compressing image…');
         try {
           const dataUrl = await fileToCompressedDataURL(coverFile.files[0]);
           p.cover = dataUrl;
           coverPreview.style.backgroundImage = `url('${dataUrl}')`;
           coverPreview.textContent = '';
-          setStatus('Immagine caricata.', 'ok');
-        } catch(e) { setStatus('Errore caricando l\'immagine.', 'err'); }
+          setStatus('Image uploaded.', 'ok');
+        } catch(e) { setStatus('Error uploading image.', 'err'); }
       });
 
       /* ---------- Pagina di dettaglio del progetto ---------- */
+      /* ---------- Piattaforme (logo sulla card) ---------- */
+      const platformsWrap = card.querySelector('[data-platforms]');
+      const platformBoxes = [];
+      PLATFORM_OPTIONS.forEach(opt => {
+        const lbl = document.createElement('label');
+        lbl.className = 'check-label';
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.checked = (p.platforms || []).includes(opt.key);
+        cb.addEventListener('change', () => {
+          p.platforms = PLATFORM_OPTIONS.filter((o, idx) => platformBoxes[idx].checked).map(o => o.key);
+        });
+        platformBoxes.push(cb);
+        lbl.appendChild(cb);
+        lbl.appendChild(document.createTextNode(opt.name));
+        platformsWrap.appendChild(lbl);
+      });
+
       const hasPageCheckbox = card.querySelector('[data-has-page]');
       const pageEditorWrap = card.querySelector('[data-page-editor]');
       let page = state.projectPages.find(pp => pp.title === p.title);
@@ -800,48 +920,48 @@
         const box = document.createElement('div');
         box.style.cssText = 'margin-top:14px; padding:14px; border:1px solid var(--line); border-radius:6px; background:var(--panel-2);';
         box.innerHTML = `
-          <label>Tipo di trailer</label>
+          <label>Trailer type</label>
           <select data-trailer-type>
-            <option value="none">Nessuno</option>
-            <option value="youtube">Video YouTube</option>
-            <option value="video">File video caricato (locale)</option>
-            <option value="image">Immagine</option>
+            <option value="none">None</option>
+            <option value="youtube">YouTube video</option>
+            <option value="video">Uploaded video file (local)</option>
+            <option value="image">Image</option>
           </select>
           <div data-trailer-youtube style="display:none">
-            <label>ID video YouTube</label>
+            <label>YouTube video ID</label>
             <input type="text" data-trailer-youtubeid placeholder="es. VrhL2W6CBlg">
           </div>
           <div data-trailer-video style="display:none">
-            <label>File video (percorso — carica poi il file vero in assets/)</label>
-            <div class="cover-preview" data-trailer-video-preview style="height:60px;">Clicca per scegliere un file video</div>
+            <label>Video file (path — then upload the actual file to assets/)</label>
+            <div class="cover-preview" data-trailer-video-preview style="height:60px;">Click to choose a video file</div>
             <input type="file" accept="video/*" data-trailer-video-file style="display:none">
           </div>
           <div data-trailer-image style="display:none">
-            <label>Immagine trailer</label>
-            <div class="cover-preview" data-trailer-image-preview style="height:100px;">Clicca per caricare un'immagine</div>
+            <label>Trailer image</label>
+            <div class="cover-preview" data-trailer-image-preview style="height:100px;">Click to upload an image</div>
             <input type="file" accept="image/*" data-trailer-image-file style="display:none">
           </div>
           <div class="row">
             <div>
-              <label>Etichetta bottone trailer</label>
+              <label>Trailer button label</label>
               <input type="text" data-trailer-label>
             </div>
             <div>
-              <label>Etichetta bottone download</label>
+              <label>Download button label</label>
               <input type="text" data-download-label>
             </div>
           </div>
-          <label>Link download (Steam, itch.io...)</label>
+          <label>Download link (Steam, itch.io...)</label>
           <input type="text" data-download-url>
-          <label>Descrizione progetto/gioco</label>
+          <label>Project/game description</label>
           <textarea data-page-description placeholder="Testo normale, oppure elenco puntato scrivendo ogni voce su una riga a parte iniziando con - (es.&#10;- Genere: Action Roguelike&#10;- Piattaforme: PC)"></textarea>
           <p class="block-hint" style="margin:-8px 0 14px">Per un elenco puntato scrivi ogni voce su una riga separata iniziando con "- " (trattino e spazio). Una riga vuota separa due paragrafi. Per il grassetto usa **parola** su 2-3 parole chiave per paragrafo, non su frasi intere.</p>
-          <label>Fatti rapidi (genere, piattaforme, ruolo, tempo, team, studio...)</label>
+          <label>Quick facts (genre, platforms, role, time, team, studio...)</label>
           <div data-facts></div>
-          <button class="add-btn" type="button" data-add-fact>+ Aggiungi fatto</button>
-          <label style="margin-top:18px">Sezioni (paragrafi con testo + media, alternati automaticamente)</label>
+          <button class="add-btn" type="button" data-add-fact>+ Add fact</button>
+          <label style="margin-top:18px">Sections (text + media paragraphs, alternated automatically)</label>
           <div data-sections></div>
-          <button class="add-btn" type="button" data-add-section>+ Aggiungi sezione</button>
+          <button class="add-btn" type="button" data-add-section>+ Add section</button>
         `;
         pageEditorWrap.appendChild(box);
 
@@ -852,10 +972,10 @@
           box.querySelector('[data-trailer-video]').style.display = page.trailer.type === 'video' ? '' : 'none';
           box.querySelector('[data-trailer-image]').style.display = page.trailer.type === 'image' ? '' : 'none';
           const vp = box.querySelector('[data-trailer-video-preview]');
-          vp.textContent = page.trailer.videoSrc ? `File: ${page.trailer.videoSrc} — clicca per cambiare` : 'Clicca per scegliere un file video';
+          vp.textContent = page.trailer.videoSrc ? `File: ${page.trailer.videoSrc} — click to change` : 'Click to choose a video file';
           const ip = box.querySelector('[data-trailer-image-preview]');
           if (page.trailer.imageSrc) { ip.style.backgroundImage = `url('${page.trailer.imageSrc}')`; ip.textContent = ''; }
-          else { ip.style.backgroundImage = ''; ip.textContent = "Clicca per caricare un'immagine"; }
+          else { ip.style.backgroundImage = ''; ip.textContent = "Click to upload an image"; }
         }
         syncTrailerFields();
         trailerTypeSel.addEventListener('change', e => { page.trailer.type = e.target.value; syncTrailerFields(); });
@@ -869,19 +989,19 @@
           if (!file) return;
           page.trailer.videoSrc = 'assets/' + file.name;
           syncTrailerFields();
-          setStatus(`Percorso video impostato: assets/${file.name} — carica anche il file vero in assets/.`, 'ok');
+          setStatus(`Video path set: assets/${file.name} — upload the actual file to assets/ too.`, 'ok');
         });
 
         box.querySelector('[data-trailer-image-preview]').addEventListener('click', () => box.querySelector('[data-trailer-image-file]').click());
         box.querySelector('[data-trailer-image-file]').addEventListener('change', async (e) => {
           const file = e.target.files[0];
           if (!file) return;
-          setStatus('Comprimo immagine…');
+          setStatus('Compressing image…');
           try {
             page.trailer.imageSrc = await fileToCompressedDataURL(file, 1600, 0.82);
             syncTrailerFields();
-            setStatus('Immagine trailer caricata.', 'ok');
-          } catch(err) { setStatus('Errore caricando l\'immagine.', 'err'); }
+            setStatus('Trailer image uploaded.', 'ok');
+          } catch(err) { setStatus('Error uploading image.', 'err'); }
         });
 
         const trailerLabelInput = box.querySelector('[data-trailer-label]');
@@ -907,8 +1027,8 @@
             const row = document.createElement('div');
             row.className = 'tag-item';
             row.innerHTML = `
-              <div><input type="text" value="${escapeAttr(f.label)}" placeholder="Etichetta"></div>
-              <div><input type="text" value="${escapeAttr(f.value)}" placeholder="Valore"></div>
+              <div><input type="text" value="${escapeAttr(f.label)}" placeholder="Label"></div>
+              <div><input type="text" value="${escapeAttr(f.value)}" placeholder="Value"></div>
               <button class="remove-btn" type="button">✕</button>
             `;
             const [labelInput, valueInput] = row.querySelectorAll('input');
@@ -919,7 +1039,7 @@
           });
         }
         renderPageFacts();
-        box.querySelector('[data-add-fact]').addEventListener('click', () => { page.facts.push({label:'Etichetta', value:'Valore'}); renderPageFacts(); });
+        box.querySelector('[data-add-fact]').addEventListener('click', () => { page.facts.push({label:'Label', value:'Value'}); renderPageFacts(); });
 
         const sectionsWrap = box.querySelector('[data-sections]');
         function renderSections(){
@@ -929,34 +1049,34 @@
             sBox.className = 'item-card';
             sBox.innerHTML = `
               <div class="item-top">
-                <span class="item-label">Sezione ${si+1}</span>
+                <span class="item-label">Section ${si+1}</span>
                 <div>
                   <button class="remove-btn" data-s-up>↑</button>
                   <button class="remove-btn" data-s-down>↓</button>
                   <button class="remove-btn" data-s-remove>✕</button>
                 </div>
               </div>
-              <label>Titolo paragrafo</label>
+              <label>Paragraph title</label>
               <input type="text" data-s-title value="${escapeAttr(s.title)}">
-              <label>Descrizione lavoro</label>
-              <textarea data-s-text placeholder="Testo normale, oppure elenco puntato con righe che iniziano con - ">${escapeHtml(s.text)}</textarea>
-              <p class="block-hint" style="margin:-8px 0 10px">Per un elenco puntato scrivi ogni voce su una riga separata iniziando con "- ". Per il grassetto usa **parola**.</p>
+              <label>Work description</label>
+              <textarea data-s-text placeholder="Normal text, or a bulleted list with lines starting with - ">${escapeHtml(s.text)}</textarea>
+              <p class="block-hint" style="margin:-8px 0 10px">For a bulleted list write each item on its own line starting with "- ". For bold text use **word**.</p>
               <label>Media</label>
               <select data-s-media-type>
-                <option value="none">Nessuno</option>
-                <option value="youtube">Video YouTube</option>
-                <option value="video">File video caricato (locale)</option>
-                <option value="image">Immagine</option>
+                <option value="none">None</option>
+                <option value="youtube">YouTube video</option>
+                <option value="video">Uploaded video file (local)</option>
+                <option value="image">Image</option>
               </select>
               <div data-s-youtube style="display:none">
-                <input type="text" data-s-youtubeid placeholder="ID video YouTube" style="margin-top:8px">
+                <input type="text" data-s-youtubeid placeholder="YouTube video ID" style="margin-top:8px">
               </div>
               <div data-s-video style="display:none">
-                <div class="cover-preview" data-s-video-preview style="height:60px; margin-top:8px;">Clicca per scegliere un file video</div>
+                <div class="cover-preview" data-s-video-preview style="height:60px; margin-top:8px;">Click to choose a video file</div>
                 <input type="file" accept="video/*" data-s-video-file style="display:none">
               </div>
               <div data-s-image style="display:none">
-                <div class="cover-preview" data-s-image-preview style="height:100px; margin-top:8px;">Clicca per caricare un'immagine</div>
+                <div class="cover-preview" data-s-image-preview style="height:100px; margin-top:8px;">Click to upload an image</div>
                 <input type="file" accept="image/*" data-s-image-file style="display:none">
               </div>
             `;
@@ -975,10 +1095,10 @@
               sBox.querySelector('[data-s-video]').style.display = s.media.type === 'video' ? '' : 'none';
               sBox.querySelector('[data-s-image]').style.display = s.media.type === 'image' ? '' : 'none';
               const vp = sBox.querySelector('[data-s-video-preview]');
-              vp.textContent = s.media.videoSrc ? `File: ${s.media.videoSrc} — clicca per cambiare` : 'Clicca per scegliere un file video';
+              vp.textContent = s.media.videoSrc ? `File: ${s.media.videoSrc} — click to change` : 'Click to choose a video file';
               const ip = sBox.querySelector('[data-s-image-preview]');
               if (s.media.imageSrc) { ip.style.backgroundImage = `url('${s.media.imageSrc}')`; ip.textContent = ''; }
-              else { ip.style.backgroundImage = ''; ip.textContent = "Clicca per caricare un'immagine"; }
+              else { ip.style.backgroundImage = ''; ip.textContent = "Click to upload an image"; }
             }
             syncSectionMedia();
             mediaTypeSel.addEventListener('change', e => { s.media.type = e.target.value; syncSectionMedia(); });
@@ -993,25 +1113,25 @@
               if (!file) return;
               s.media.videoSrc = 'assets/' + file.name;
               syncSectionMedia();
-              setStatus(`Percorso video impostato: assets/${file.name} — carica anche il file vero in assets/.`, 'ok');
+              setStatus(`Video path set: assets/${file.name} — upload the actual file to assets/ too.`, 'ok');
             });
 
             sBox.querySelector('[data-s-image-preview]').addEventListener('click', () => sBox.querySelector('[data-s-image-file]').click());
             sBox.querySelector('[data-s-image-file]').addEventListener('change', async (e) => {
               const file = e.target.files[0];
               if (!file) return;
-              setStatus('Comprimo immagine…');
+              setStatus('Compressing image…');
               try {
                 s.media.imageSrc = await fileToCompressedDataURL(file, 1400, 0.82);
                 syncSectionMedia();
-                setStatus('Immagine caricata.', 'ok');
-              } catch(err) { setStatus('Errore caricando l\'immagine.', 'err'); }
+                setStatus('Image uploaded.', 'ok');
+              } catch(err) { setStatus('Error uploading image.', 'err'); }
             });
           });
         }
         renderSections();
         box.querySelector('[data-add-section]').addEventListener('click', () => {
-          page.sections.push({ title: 'Titolo paragrafo', text: 'Descrizione lavoro', media: { type: 'none', youtubeId: '', videoSrc: '', imageSrc: '' } });
+          page.sections.push({ title: 'Paragraph title', text: 'Work description', media: { type: 'none', youtubeId: '', videoSrc: '', imageSrc: '' } });
           renderSections();
         });
       }
@@ -1047,16 +1167,16 @@
       card.className = 'item-card';
       card.innerHTML = `
         <div class="item-top">
-          <span class="item-label">Articolo ${i+1}</span>
+          <span class="item-label">Article ${i+1}</span>
           <button class="remove-btn" data-remove>✕</button>
         </div>
-        <label>Titolo</label>
+        <label>Title</label>
         <input type="text" data-field="title" value="${escapeAttr(a.title)}">
         <label>Estratto</label>
         <textarea data-field="excerpt">${escapeHtml(a.excerpt)}</textarea>
         <div class="row">
           <div>
-            <label>Fonte (es. Medium, LinkedIn)</label>
+            <label>Source (e.g. Medium, LinkedIn)</label>
             <input type="text" data-field="tag" value="${escapeAttr(a.tag)}">
           </div>
           <div>
@@ -1083,52 +1203,52 @@
       card.className = 'item-card';
       card.innerHTML = `
         <div class="item-top">
-          <span class="item-label">Progetto ${i+1}</span>
+          <span class="item-label">Project ${i+1}</span>
           <div>
             <button class="remove-btn" data-up>↑</button>
             <button class="remove-btn" data-down>↓</button>
             <button class="remove-btn" data-remove>✕</button>
           </div>
         </div>
-        <label>Titolo</label>
+        <label>Title</label>
         <input type="text" data-field="title" value="${escapeAttr(entry.title)}">
 
-        <label>Immagini/video del carosello</label>
+        <label>Carousel images/videos</label>
         <div data-media></div>
-        <button class="add-btn" type="button" data-add-media>+ Aggiungi immagine/video</button>
+        <button class="add-btn" type="button" data-add-media>+ Add image/video</button>
 
         <div class="row" style="margin-top:14px">
           <div>
-            <label>Etichetta bottone trailer</label>
+            <label>Trailer button label</label>
             <input type="text" data-field="trailerLabel" value="${escapeAttr(entry.trailerLabel || 'Trailer')}">
           </div>
           <div>
-            <label>Etichetta bottone download</label>
+            <label>Download button label</label>
             <input type="text" data-field="downloadLabel" value="${escapeAttr(entry.downloadLabel || 'Download')}">
           </div>
         </div>
         <div class="row">
           <div>
-            <label>Link trailer (lascia vuoto per non mostrare il bottone)</label>
+            <label>Trailer link (leave empty to hide the button)</label>
             <input type="text" data-field="trailerUrl" value="${escapeAttr(entry.trailerUrl)}">
           </div>
           <div>
-            <label>Link download (lascia vuoto per non mostrare il bottone)</label>
+            <label>Download link (leave empty to hide the button)</label>
             <input type="text" data-field="downloadUrl" value="${escapeAttr(entry.downloadUrl)}">
           </div>
         </div>
 
-        <label>Descrizione progetto/gioco</label>
-        <textarea data-field="description" placeholder="Testo normale, o elenco puntato con righe che iniziano con - ">${escapeHtml(entry.description)}</textarea>
-        <p class="block-hint" style="margin:-8px 0 10px">Per un elenco puntato usa righe che iniziano con "- ". Per il grassetto usa **parola**.</p>
+        <label>Project/game description</label>
+        <textarea data-field="description" placeholder="Normal text, or a bulleted list with lines starting with - ">${escapeHtml(entry.description)}</textarea>
+        <p class="block-hint" style="margin:-8px 0 10px">For a bulleted list use lines starting with "- ". For bold text use **word**.</p>
 
-        <label>Fatti rapidi</label>
+        <label>Quick facts</label>
         <div data-facts></div>
-        <button class="add-btn" type="button" data-add-fact>+ Aggiungi fatto</button>
+        <button class="add-btn" type="button" data-add-fact>+ Add fact</button>
 
-        <label style="margin-top:14px">Responsabilità e cose fatte</label>
-        <textarea data-field="responsibilities" placeholder="Elenco puntato: ogni riga che inizia con - diventa un punto elenco">${escapeHtml(entry.responsibilities)}</textarea>
-        <p class="block-hint" style="margin:-8px 0 0">Stessa sintassi: righe con "- " per l'elenco puntato, **parola** per il grassetto.</p>
+        <label style="margin-top:14px">Responsibilities & what I did</label>
+        <textarea data-field="responsibilities" placeholder="Bulleted list: each line starting with - becomes a bullet point">${escapeHtml(entry.responsibilities)}</textarea>
+        <p class="block-hint" style="margin:-8px 0 0">Same syntax: lines with "- " for bullet points, **word** for bold text.</p>
       `;
       wrap.appendChild(card);
 
@@ -1156,21 +1276,21 @@
               <button class="remove-btn" type="button" data-m-remove>✕</button>
             </div>
             <select data-m-type>
-              <option value="none">Nessuno (placeholder)</option>
-              <option value="image">Immagine</option>
-              <option value="video">File video caricato (locale)</option>
-              <option value="youtube">Video YouTube</option>
+              <option value="none">None (placeholder)</option>
+              <option value="image">Image</option>
+              <option value="video">Uploaded video file (local)</option>
+              <option value="youtube">YouTube video</option>
             </select>
             <div data-m-image style="display:none">
-              <div class="cover-preview" data-m-image-preview style="height:80px; margin-top:8px;">Clicca per caricare un'immagine</div>
+              <div class="cover-preview" data-m-image-preview style="height:80px; margin-top:8px;">Click to upload an image</div>
               <input type="file" accept="image/*" data-m-image-file style="display:none">
             </div>
             <div data-m-video style="display:none">
-              <div class="cover-preview" data-m-video-preview style="height:60px; margin-top:8px;">Clicca per scegliere un file video</div>
+              <div class="cover-preview" data-m-video-preview style="height:60px; margin-top:8px;">Click to choose a video file</div>
               <input type="file" accept="video/*" data-m-video-file style="display:none">
             </div>
             <div data-m-youtube style="display:none">
-              <input type="text" data-m-youtubeid placeholder="ID video YouTube" style="margin-top:8px">
+              <input type="text" data-m-youtubeid placeholder="YouTube video ID" style="margin-top:8px">
             </div>
           `;
           mediaWrap.appendChild(mBox);
@@ -1183,9 +1303,9 @@
             mBox.querySelector('[data-m-youtube]').style.display = m.type === 'youtube' ? '' : 'none';
             const ip = mBox.querySelector('[data-m-image-preview]');
             if (m.imageSrc) { ip.style.backgroundImage = `url('${m.imageSrc}')`; ip.style.backgroundSize = 'cover'; ip.textContent = ''; }
-            else { ip.style.backgroundImage = ''; ip.textContent = "Clicca per caricare un'immagine"; }
+            else { ip.style.backgroundImage = ''; ip.textContent = "Click to upload an image"; }
             const vp = mBox.querySelector('[data-m-video-preview]');
-            vp.textContent = m.videoSrc ? `File: ${m.videoSrc} — clicca per cambiare` : 'Clicca per scegliere un file video';
+            vp.textContent = m.videoSrc ? `File: ${m.videoSrc} — click to change` : 'Click to choose a video file';
           }
           syncMediaFields();
           typeSel.addEventListener('change', e => { m.type = e.target.value; syncMediaFields(); });
@@ -1194,12 +1314,12 @@
           mBox.querySelector('[data-m-image-file]').addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (!file) return;
-            setStatus('Comprimo immagine…');
+            setStatus('Compressing image…');
             try {
               m.imageSrc = await fileToCompressedDataURL(file, 1400, 0.8);
               syncMediaFields();
-              setStatus('Immagine caricata.', 'ok');
-            } catch (err) { setStatus('Errore caricando l\'immagine.', 'err'); }
+              setStatus('Image uploaded.', 'ok');
+            } catch (err) { setStatus('Error uploading image.', 'err'); }
           });
 
           mBox.querySelector('[data-m-video-preview]').addEventListener('click', () => mBox.querySelector('[data-m-video-file]').click());
@@ -1208,7 +1328,7 @@
             if (!file) return;
             m.videoSrc = 'assets/' + file.name;
             syncMediaFields();
-            setStatus(`Percorso video impostato: assets/${file.name} — carica anche il file vero in assets/.`, 'ok');
+            setStatus(`Video path set: assets/${file.name} — upload the actual file to assets/ too.`, 'ok');
           });
 
           const ytInput = mBox.querySelector('[data-m-youtubeid]');
@@ -1233,8 +1353,8 @@
           const row = document.createElement('div');
           row.className = 'tag-item';
           row.innerHTML = `
-            <div><input type="text" value="${escapeAttr(f.label)}" placeholder="Etichetta"></div>
-            <div><input type="text" value="${escapeAttr(f.value)}" placeholder="Valore"></div>
+            <div><input type="text" value="${escapeAttr(f.label)}" placeholder="Label"></div>
+            <div><input type="text" value="${escapeAttr(f.value)}" placeholder="Value"></div>
             <button class="remove-btn" type="button">✕</button>
           `;
           const [labelInput, valueInput] = row.querySelectorAll('input');
@@ -1247,7 +1367,7 @@
       renderEntryFacts();
       card.querySelector('[data-add-fact]').addEventListener('click', () => {
         if (!entry.facts) entry.facts = [];
-        entry.facts.push({ label: 'Etichetta', value: 'Valore' });
+        entry.facts.push({ label: 'Label', value: 'Value' });
         renderEntryFacts();
       });
     });
@@ -1261,52 +1381,52 @@
       card.className = 'item-card';
       card.innerHTML = `
         <div class="item-top">
-          <span class="item-label">Sessione ${i+1}</span>
+          <span class="item-label">Session ${i+1}</span>
           <div>
             <button class="remove-btn" data-up>↑</button>
             <button class="remove-btn" data-down>↓</button>
             <button class="remove-btn" data-remove>✕</button>
           </div>
         </div>
-        <label>Titolo</label>
+        <label>Title</label>
         <input type="text" data-field="title" value="${escapeAttr(entry.title)}">
 
-        <label>Immagini/video del carosello</label>
+        <label>Carousel images/videos</label>
         <div data-media></div>
-        <button class="add-btn" type="button" data-add-media>+ Aggiungi immagine/video</button>
+        <button class="add-btn" type="button" data-add-media>+ Add image/video</button>
 
         <div class="row" style="margin-top:14px">
           <div>
-            <label>Etichetta bottone trailer</label>
+            <label>Trailer button label</label>
             <input type="text" data-field="trailerLabel" value="${escapeAttr(entry.trailerLabel || 'Trailer')}">
           </div>
           <div>
-            <label>Etichetta bottone download</label>
+            <label>Download button label</label>
             <input type="text" data-field="downloadLabel" value="${escapeAttr(entry.downloadLabel || 'Download')}">
           </div>
         </div>
         <div class="row">
           <div>
-            <label>Link trailer (lascia vuoto per non mostrare il bottone)</label>
+            <label>Trailer link (leave empty to hide the button)</label>
             <input type="text" data-field="trailerUrl" value="${escapeAttr(entry.trailerUrl)}">
           </div>
           <div>
-            <label>Link download (lascia vuoto per non mostrare il bottone)</label>
+            <label>Download link (leave empty to hide the button)</label>
             <input type="text" data-field="downloadUrl" value="${escapeAttr(entry.downloadUrl)}">
           </div>
         </div>
 
-        <label>Descrizione progetto/gioco</label>
-        <textarea data-field="description" placeholder="Testo normale, o elenco puntato con righe che iniziano con - ">${escapeHtml(entry.description)}</textarea>
-        <p class="block-hint" style="margin:-8px 0 10px">Per un elenco puntato usa righe che iniziano con "- ". Per il grassetto usa **parola**.</p>
+        <label>Project/game description</label>
+        <textarea data-field="description" placeholder="Normal text, or a bulleted list with lines starting with - ">${escapeHtml(entry.description)}</textarea>
+        <p class="block-hint" style="margin:-8px 0 10px">For a bulleted list use lines starting with "- ". For bold text use **word**.</p>
 
-        <label>Fatti rapidi</label>
+        <label>Quick facts</label>
         <div data-facts></div>
-        <button class="add-btn" type="button" data-add-fact>+ Aggiungi fatto</button>
+        <button class="add-btn" type="button" data-add-fact>+ Add fact</button>
 
-        <label style="margin-top:14px">Responsabilità e cose fatte</label>
-        <textarea data-field="responsibilities" placeholder="Elenco puntato: ogni riga che inizia con - diventa un punto elenco">${escapeHtml(entry.responsibilities)}</textarea>
-        <p class="block-hint" style="margin:-8px 0 0">Stessa sintassi: righe con "- " per l'elenco puntato, **parola** per il grassetto.</p>
+        <label style="margin-top:14px">Responsibilities & what I did</label>
+        <textarea data-field="responsibilities" placeholder="Bulleted list: each line starting with - becomes a bullet point">${escapeHtml(entry.responsibilities)}</textarea>
+        <p class="block-hint" style="margin:-8px 0 0">Same syntax: lines with "- " for bullet points, **word** for bold text.</p>
       `;
       wrap.appendChild(card);
 
@@ -1334,21 +1454,21 @@
               <button class="remove-btn" type="button" data-m-remove>✕</button>
             </div>
             <select data-m-type>
-              <option value="none">Nessuno (placeholder)</option>
-              <option value="image">Immagine</option>
-              <option value="video">File video caricato (locale)</option>
-              <option value="youtube">Video YouTube</option>
+              <option value="none">None (placeholder)</option>
+              <option value="image">Image</option>
+              <option value="video">Uploaded video file (local)</option>
+              <option value="youtube">YouTube video</option>
             </select>
             <div data-m-image style="display:none">
-              <div class="cover-preview" data-m-image-preview style="height:80px; margin-top:8px;">Clicca per caricare un'immagine</div>
+              <div class="cover-preview" data-m-image-preview style="height:80px; margin-top:8px;">Click to upload an image</div>
               <input type="file" accept="image/*" data-m-image-file style="display:none">
             </div>
             <div data-m-video style="display:none">
-              <div class="cover-preview" data-m-video-preview style="height:60px; margin-top:8px;">Clicca per scegliere un file video</div>
+              <div class="cover-preview" data-m-video-preview style="height:60px; margin-top:8px;">Click to choose a video file</div>
               <input type="file" accept="video/*" data-m-video-file style="display:none">
             </div>
             <div data-m-youtube style="display:none">
-              <input type="text" data-m-youtubeid placeholder="ID video YouTube" style="margin-top:8px">
+              <input type="text" data-m-youtubeid placeholder="YouTube video ID" style="margin-top:8px">
             </div>
           `;
           mediaWrap.appendChild(mBox);
@@ -1361,9 +1481,9 @@
             mBox.querySelector('[data-m-youtube]').style.display = m.type === 'youtube' ? '' : 'none';
             const ip = mBox.querySelector('[data-m-image-preview]');
             if (m.imageSrc) { ip.style.backgroundImage = `url('${m.imageSrc}')`; ip.style.backgroundSize = 'cover'; ip.textContent = ''; }
-            else { ip.style.backgroundImage = ''; ip.textContent = "Clicca per caricare un'immagine"; }
+            else { ip.style.backgroundImage = ''; ip.textContent = "Click to upload an image"; }
             const vp = mBox.querySelector('[data-m-video-preview]');
-            vp.textContent = m.videoSrc ? `File: ${m.videoSrc} — clicca per cambiare` : 'Clicca per scegliere un file video';
+            vp.textContent = m.videoSrc ? `File: ${m.videoSrc} — click to change` : 'Click to choose a video file';
           }
           syncMediaFields();
           typeSel.addEventListener('change', e => { m.type = e.target.value; syncMediaFields(); });
@@ -1372,12 +1492,12 @@
           mBox.querySelector('[data-m-image-file]').addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (!file) return;
-            setStatus('Comprimo immagine…');
+            setStatus('Compressing image…');
             try {
               m.imageSrc = await fileToCompressedDataURL(file, 1400, 0.8);
               syncMediaFields();
-              setStatus('Immagine caricata.', 'ok');
-            } catch (err) { setStatus('Errore caricando l\'immagine.', 'err'); }
+              setStatus('Image uploaded.', 'ok');
+            } catch (err) { setStatus('Error uploading image.', 'err'); }
           });
 
           mBox.querySelector('[data-m-video-preview]').addEventListener('click', () => mBox.querySelector('[data-m-video-file]').click());
@@ -1386,7 +1506,7 @@
             if (!file) return;
             m.videoSrc = 'assets/' + file.name;
             syncMediaFields();
-            setStatus(`Percorso video impostato: assets/${file.name} — carica anche il file vero in assets/.`, 'ok');
+            setStatus(`Video path set: assets/${file.name} — upload the actual file to assets/ too.`, 'ok');
           });
 
           const ytInput = mBox.querySelector('[data-m-youtubeid]');
@@ -1411,8 +1531,8 @@
           const row = document.createElement('div');
           row.className = 'tag-item';
           row.innerHTML = `
-            <div><input type="text" value="${escapeAttr(f.label)}" placeholder="Etichetta"></div>
-            <div><input type="text" value="${escapeAttr(f.value)}" placeholder="Valore"></div>
+            <div><input type="text" value="${escapeAttr(f.label)}" placeholder="Label"></div>
+            <div><input type="text" value="${escapeAttr(f.value)}" placeholder="Value"></div>
             <button class="remove-btn" type="button">✕</button>
           `;
           const [labelInput, valueInput] = row.querySelectorAll('input');
@@ -1425,7 +1545,7 @@
       renderEntryFacts();
       card.querySelector('[data-add-fact]').addEventListener('click', () => {
         if (!entry.facts) entry.facts = [];
-        entry.facts.push({ label: 'Etichetta', value: 'Valore' });
+        entry.facts.push({ label: 'Label', value: 'Value' });
         renderEntryFacts();
       });
     });
@@ -1439,8 +1559,8 @@
       const row = document.createElement('div');
       row.className = 'tag-item';
       row.innerHTML = `
-        <div><input type="text" value="${escapeAttr(f.label)}" placeholder="Etichetta"></div>
-        <div><input type="text" value="${escapeAttr(f.value)}" placeholder="Valore"></div>
+        <div><input type="text" value="${escapeAttr(f.label)}" placeholder="Label"></div>
+        <div><input type="text" value="${escapeAttr(f.value)}" placeholder="Value"></div>
         <button class="remove-btn" type="button">✕</button>
       `;
       const [labelInput, valueInput] = row.querySelectorAll('input');
@@ -1460,12 +1580,12 @@
       card.className = 'item-card';
       card.innerHTML = `
         <div class="item-top">
-          <span class="item-label">Domanda ${i+1}</span>
+          <span class="item-label">Question ${i+1}</span>
           <button class="remove-btn" data-remove>✕</button>
         </div>
-        <label>Domanda</label>
+        <label>Question</label>
         <input type="text" data-field="q" value="${escapeAttr(item.q)}">
-        <label>Risposta</label>
+        <label>Answer</label>
         <textarea data-field="a">${escapeHtml(item.a)}</textarea>
       `;
       wrap.appendChild(card);
@@ -1484,10 +1604,10 @@
       const row = document.createElement('div');
       row.className = 'tag-cat-row';
       row.innerHTML = `
-        <input type="color" class="tag-cat-swatch" value="${c.color}" title="Colore">
-        <input type="text" value="${escapeAttr(c.label)}" placeholder="Nome categoria">
+        <input type="color" class="tag-cat-swatch" value="${c.color}" title="Color">
+        <input type="text" value="${escapeAttr(c.label)}" placeholder="Category name">
         <span class="tag-cat-key">${escapeHtml(c.key)}</span>
-        <button class="remove-btn" type="button" title="Rimuovi categoria">✕</button>
+        <button class="remove-btn" type="button" title="Remove category">✕</button>
       `;
       const colorInput = row.querySelector('input[type=color]');
       const labelInput = row.querySelector('input[type=text]');
@@ -1525,13 +1645,13 @@
     const labelInput = document.getElementById('new-tag-label');
     const colorInput = document.getElementById('new-tag-color');
     const label = labelInput.value.trim();
-    if (!label) { setStatus('Dai un nome alla nuova categoria prima di crearla.', 'err'); return; }
+    if (!label) { setStatus('Give the new category a name before creating it.', 'err'); return; }
 
     let key = label.toLowerCase()
       .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');
-    if (!key) key = 'categoria';
+    if (!key) key = 'category';
     let uniqueKey = key, n = 2;
     while (state.tagCategories.some(c => c.key === uniqueKey)) {
       uniqueKey = `${key}-${n}`;
@@ -1543,7 +1663,7 @@
     colorInput.value = '#4fd8ea';
     renderTagCategories();
     refreshCategoryDependentUI();
-    setStatus(`Categoria "${label}" creata.`, 'ok');
+    setStatus(`Category "${label}" created.`, 'ok');
   });
 
   function renderSimpleList(containerId, arr, rerenderFn){
@@ -1553,7 +1673,7 @@
       const row = document.createElement('div');
       row.className = 'tag-item';
       row.innerHTML = `
-        <div><input type="text" value="${escapeAttr(s.name)}" placeholder="Nome"></div>
+        <div><input type="text" value="${escapeAttr(s.name)}" placeholder="Name"></div>
         <div><select>${getCategoryOptions(s.cat)}</select></div>
         <button class="remove-btn" type="button">✕</button>
       `;
@@ -1602,7 +1722,7 @@
       aboutPreview.textContent = '';
     } else {
       aboutPreview.style.backgroundImage = '';
-      aboutPreview.textContent = 'Clicca per caricare una foto';
+      aboutPreview.textContent = 'Click to upload a photo';
     }
   }
 
@@ -1612,17 +1732,17 @@
   setupBrandListeners();
 
   document.getElementById('add-project').addEventListener('click', () => {
-    state.projects.push({ title: 'Nuovo progetto', role: 'Ruolo', tags: [], cover: '' });
+    state.projects.push({ title: 'New project', role: 'Role', tags: [], cover: '', platforms: [] });
     renderProjects();
   });
   document.getElementById('add-article').addEventListener('click', () => {
-    state.articles.push({ title: 'Nuovo articolo', excerpt: '', tag: 'Medium', url: '' });
+    state.articles.push({ title: 'New article', excerpt: '', tag: 'Medium', url: '' });
     renderArticles();
   });
 
   document.getElementById('add-other-project').addEventListener('click', () => {
     state.otherProjects.push({
-      title: 'Nuovo progetto',
+      title: 'New project',
       media: [],
       trailerLabel: 'Trailer', trailerUrl: '',
       downloadLabel: 'Download', downloadUrl: '',
@@ -1632,7 +1752,7 @@
   });
   document.getElementById('add-qa-testing').addEventListener('click', () => {
     state.qaTesting.push({
-      title: 'Nuova sessione',
+      title: 'New session',
       media: [],
       trailerLabel: 'Trailer', trailerUrl: '',
       downloadLabel: 'Download', downloadUrl: '',
@@ -1641,19 +1761,19 @@
     renderQaTesting();
   });
   document.getElementById('add-fact').addEventListener('click', () => {
-    state.about.facts.push({ label: 'Etichetta', value: 'Valore' });
+    state.about.facts.push({ label: 'Label', value: 'Value' });
     renderFacts();
   });
   document.getElementById('add-qa').addEventListener('click', () => {
-    state.qa.push({ q: 'Nuova domanda', a: 'Risposta' });
+    state.qa.push({ q: 'New question', a: 'Answer' });
     renderQA();
   });
   document.getElementById('add-skill').addEventListener('click', () => {
-    state.skills.push({ name: 'Nuova skill', cat: 'design' });
+    state.skills.push({ name: 'New skill', cat: 'design' });
     renderSkills();
   });
   document.getElementById('add-software').addEventListener('click', () => {
-    state.software.push({ name: 'Nuovo software', cat: 'tools' });
+    state.software.push({ name: 'New software', cat: 'tools' });
     renderSoftware();
   });
 
@@ -1662,15 +1782,15 @@
   });
   document.getElementById('about-photo-file').addEventListener('change', async (e) => {
     if (!e.target.files[0]) return;
-    setStatus('Comprimo immagine…');
+    setStatus('Compressing image…');
     try {
       const dataUrl = await fileToCompressedDataURL(e.target.files[0], 900, 0.85);
       state.about.photo = dataUrl;
       const preview = document.getElementById('about-photo-preview');
       preview.style.backgroundImage = `url('${dataUrl}')`;
       preview.textContent = '';
-      setStatus('Foto caricata.', 'ok');
-    } catch(err) { setStatus('Errore caricando la foto.', 'err'); }
+      setStatus('Photo uploaded.', 'ok');
+    } catch(err) { setStatus('Error uploading photo.', 'err'); }
   });
 
   document.getElementById('btn-load-existing').addEventListener('click', async () => {
@@ -1681,9 +1801,9 @@
       const json = await res.json();
       state = Object.assign(JSON.parse(JSON.stringify(DEFAULT_DATA)), json);
       renderAll();
-      setStatus('data.json caricato.', 'ok');
+      setStatus('data.json loaded.', 'ok');
     } catch (e) {
-      setStatus('Nessun data.json trovato in questa cartella — parto dai valori attuali del sito.', 'err');
+      setStatus('No data.json found in this folder — starting from the site\'s current values.', 'err');
     }
   });
 
@@ -1699,9 +1819,9 @@
         const json = JSON.parse(reader.result);
         state = Object.assign(JSON.parse(JSON.stringify(DEFAULT_DATA)), json);
         renderAll();
-        setStatus('File caricato: ' + file.name, 'ok');
+        setStatus('File loaded: ' + file.name, 'ok');
       } catch (err) {
-        setStatus('Il file non è un JSON valido.', 'err');
+        setStatus('This file is not valid JSON.', 'err');
       }
     };
     reader.readAsText(file);
@@ -1717,7 +1837,7 @@
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    setStatus('data.json scaricato.', 'ok');
+    setStatus('data.json downloaded.', 'ok');
   });
 
   /* All'apertura, prova subito a caricare data.json dalla stessa cartella */
@@ -1727,12 +1847,12 @@
       if (res.ok) {
         const json = await res.json();
         state = Object.assign(JSON.parse(JSON.stringify(DEFAULT_DATA)), json);
-        setStatus('data.json caricato automaticamente.', 'ok');
+        setStatus('data.json loaded automatically.', 'ok');
       } else {
-        setStatus('data.json non trovato — parto dai valori di default. Usa "Carica file JSON" se ne hai uno.');
+        setStatus('data.json not found — starting from default values. Use "Load JSON file" if you have one.');
       }
     } catch (e) {
-      setStatus('data.json non trovato — parto dai valori di default. Usa "Carica file JSON" se ne hai uno.');
+      setStatus('data.json not found — starting from default values. Use "Load JSON file" if you have one.');
     }
     renderAll();
   })();
